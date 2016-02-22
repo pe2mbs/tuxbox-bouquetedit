@@ -5,22 +5,16 @@ Why another Bouquet Editor, there are several bouquet editors some are Windows o
 and Linux / multi platform. Most of these don't work like they should be therefore another was desired. 
 
 # Usage:
-	When starting the application and a receiver is set to autoload, the application will load the channels and bouquets from the receiver
-
-	 
-	
-
+When starting the application and a receiver is set to autoload, the application will load the channels and bouquets from the receiver
 
 ## Keys
-	Service list
-	------------
+###	Service list
 	UP						move up an item
 	DOWN					move down an item
 	ENTER / Double click	start mplayer
 	Q / q					terminate mplayer process
 
-	Bouquet tree
-	------------
+### Bouquet tree
 	UP						move up an item
 	DOWN					move down an item
 	ENTER / Double click	start mplayer
@@ -31,7 +25,6 @@ and Linux / multi platform. Most of these don't work like they should be therefo
 	DELETE					Remove item from the list
 	
 
-
 # Todo
 1.	Bouquet "Drag and Drop". 
 2.	"Drag and Drop" service to bouquet.
@@ -41,7 +34,7 @@ and Linux / multi platform. Most of these don't work like they should be therefo
 4.	Open bouquets (folder).
 5.	Printer setup and print.
 6.  Help system.
-7.  
+7.  Improve the preferences dialog
 
 # Issues
 1.	Sometimes in filter mode on ASC mode services disapear
