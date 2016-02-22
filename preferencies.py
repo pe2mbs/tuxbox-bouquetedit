@@ -4,14 +4,14 @@ from lxml import etree
 # begin wxGlade: dependencies
 import gettext
 # end wxGlade
-import bouquetedit.gui
+import gui
 
 __author__ = 'mbertens'
 
-class Preferences( bouquetedit.gui.Preferences ):
+class Preferences( gui.Preferences ):
     CHECKBOX_COLUMN = 3
     def __init__(self, config, *args, **kwds):
-        bouquetedit.gui.Preferences.__init__( self, *args, **kwds )
+        gui.Preferences.__init__( self, *args, **kwds )
         self.Config = config
         self.receivers.SetSize( ( 777, 337 ) )
         self.receivers.InsertColumn( 0, 'Hostname' )

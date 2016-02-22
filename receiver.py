@@ -3,13 +3,13 @@ import wx
 # begin wxGlade: dependencies
 import gettext
 # end wxGlade
-import bouquetedit.gui
+import gui
 
 __author__ = 'mbertens'
 
-class OpenReceiver( bouquetedit.gui.OpenReceiver ):
+class OpenReceiver( gui.OpenReceiver ):
     def __init__(self, *args, **kwds):
-        bouquetedit.gui.OpenReceiver.__init__( self, *args, **kwds )
+        gui.OpenReceiver.__init__( self, *args, **kwds )
         return
     # end def
 

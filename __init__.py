@@ -6,7 +6,7 @@
 import wx
 import gettext
 import time
-import bouquetedit.mainwnd
+import mainwnd
 
 class MySplashScreen( wx.SplashScreen ):
     """
@@ -24,7 +24,7 @@ Create a splash screen widget.
         wx.SplashScreen.__init__( self, aBitmap, splashStyle,
                                   splashDuration, None )
         self.Bind( wx.EVT_CLOSE, self.OnExit )
-        self.__parent.mainwindow = bouquetedit.mainwnd.MainWnd( None, wx.ID_ANY, "" )
+        self.__parent.mainwindow = mainwnd.MainWnd( None, wx.ID_ANY, "" )
         wx.Yield()
         return
     # end def

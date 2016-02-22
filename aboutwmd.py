@@ -3,13 +3,13 @@ import wx
 # begin wxGlade: dependencies
 import gettext
 # end wxGlade
-import bouquetedit.gui
+import gui
 
 __author__ = 'mbertens'
 
-class AboutWnd( bouquetedit.gui.AboutWnd ):
+class AboutWnd( gui.AboutWnd ):
     def __init__(self, *args, **kwds):
-        bouquetedit.gui.AboutWnd.__init__( self, *args, **kwds )
+        gui.AboutWnd.__init__( self, *args, **kwds )
         self.Bind( wx.EVT_BUTTON, self.clickClose, self.button_13 )
         return
     # end def

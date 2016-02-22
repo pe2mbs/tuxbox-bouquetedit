@@ -6,6 +6,10 @@ and Linux / multi platform. Most of these don't work like they should be therefo
 This Bouquet editor uses the wxWidgets 2.8 library and is written in Python. All through the application not complete (see todo) 
 I like to get some feedback on how the application experienced is at this time. 
 
+I thank "spacedentist" and his project enigma2-bouqueteditor, the enigma2.py module, I used this to do all the parsing and building 
+the service list and bouquets. 
+
+All through this is build on a Linux system, it should run on Windows and Mac.  
 
 # Usage:
 When starting the application and a receiver is set to autoload, the application will load the channels and bouquets from the receiver.

@@ -4,16 +4,16 @@ import subprocess
 # begin wxGlade: dependencies
 import gettext
 # end wxGlade
-import bouquetedit.gui
-import bouquetedit.preferencies
-import bouquetedit.receiver
-import bouquetedit.aboutwmd
-import bouquetedit.config
-import bouquetedit.enigma
+import gui
+import preferencies
+import receiver
+import aboutwmd
+import config
+import enigma
 
 __author__ = 'mbertens'
 
-class MainWnd( bouquetedit.gui.BouquetEditMainWnd ):
+class MainWnd( gui.BouquetEditMainWnd ):
     COLUMN_SERVICE_NAME             = 0
     COLUMN_SERVICE_PROVIDER         = 1
     COLUMN_SERVICE_POSITION         = 2
@@ -33,9 +33,9 @@ class MainWnd( bouquetedit.gui.BouquetEditMainWnd ):
     BOUQUET_ADD                     = wx.NewId()
 
     def __init__(self, *args, **kwds):
-        bouquetedit.gui.BouquetEditMainWnd.__init__( self, *args, **kwds )
+        gui.BouquetEditMainWnd.__init__( self, *args, **kwds )
         # Read the configuration of the application
-        self.Config         = bouquetedit.config.Config( 'config.xml' )
+        self.Config         = config.Config( 'config.xml' )
         self.COLUMNS        = []
         self.Preferences    = None
         self.bouquetMenu    = wx.Menu()
@@ -92,7 +92,7 @@ class MainWnd( bouquetedit.gui.BouquetEditMainWnd ):
 
         self.services.VirtualItemText( self.OnGetItemText )
         self.services.SetHighlightColor( 'yellow' )
-        self.engima = bouquetedit.enigma.Enigma2()
+        self.engima = enigma.Enigma2()
         self.__reverse = False
         self.__sortColumn = -1
         self.__items = []
@@ -140,7 +140,7 @@ class MainWnd( bouquetedit.gui.BouquetEditMainWnd ):
 
     def clickMenuNewEntry( self, event ):
         child = self.bouquets.AppendItem( self.bouquets.GetRootItem(), 'New bouquet' )
-        child_e = bouquetedit.enigma.Bouquet()
+        child_e = enigma.Bouquet()
         if child_e is not None:
             self.bouquets.SetItemPyData( child, child_e )
             if child_e.type == 'bouquet':
@@ -188,18 +188,18 @@ class MainWnd( bouquetedit.gui.BouquetEditMainWnd ):
             if event.Id == self.BOUQUET_ITEM_MARKER_INS_BEFORE:
                 child = self.bouquets.InsertBefore( treeItem, 'New marker' )
                 if child.IsOk():
-                    child_e = bouquetedit.enigma.BouquetMarker()
+                    child_e = enigma.BouquetMarker()
                 else:
                     raise Exception( "Invalid child on BOUQUET_ITEM_MARKER_INS_BEFORE" )
                 # end if
 
             elif event.Id == self.BOUQUET_ITEM_MARKER_INS_AFTER:
                 child = self.bouquets.InsertItem( parent, treeItem, 'New marker' )
-                child_e = bouquetedit.enigma.BouquetMarker()
+                child_e = enigma.BouquetMarker()
 
             elif event.Id == self.BOUQUET_ITEM_MARKER_ADD:
                 child = self.bouquets.AppendItem( parent, 'New marker' )
-                child_e = bouquetedit.enigma.BouquetMarker()
+                child_e = enigma.BouquetMarker()
 
             elif event.Id == self.BOUQUET_ITEM_REMOVE:
                 if e.type == 'bouquet':
@@ -223,7 +223,7 @@ class MainWnd( bouquetedit.gui.BouquetEditMainWnd ):
             elif event.Id == self.BOUQUET_INS_BEFORE:
                 child = self.bouquets.InsertBefore( treeItem, 'New bouquet' )
                 if child.IsOk():
-                    child_e = bouquetedit.enigma.Bouquet()
+                    child_e = enigma.Bouquet()
 
                 else:
                     raise Exception( "Invalid child on BOUQUET_ITEM_MARKER_INS_BEFORE" )
@@ -231,11 +231,11 @@ class MainWnd( bouquetedit.gui.BouquetEditMainWnd ):
 
             elif event.Id == self.BOUQUET_INS_AFTER:
                 child = self.bouquets.InsertItem( parent, treeItem, 'New bouquet' )
-                child_e = bouquetedit.enigma.Bouquet()
+                child_e = enigma.Bouquet()
 
             elif event.Id == self.BOUQUET_ADD:
                 child = self.bouquets.AppendItem( self.bouquets.GetRootItem(), 'New bouquet' )
-                child_e = bouquetedit.enigma.Bouquet()
+                child_e = enigma.Bouquet()
 
             else:
                 raise Exception( "Invalid event from PopupMenuBouquet()" )
@@ -376,7 +376,7 @@ class MainWnd( bouquetedit.gui.BouquetEditMainWnd ):
     # end def
 
     def Save(self):
-        self.__bouquets = bouquetedit.enigma.Bouquet()
+        self.__bouquets = enigma.Bouquet()
         self.__put_bouquet_entry( self.__bouquets,
                                   self.bouquets.GetRootItem() )
         for item in self.__bouquets.items:
@@ -396,22 +396,22 @@ class MainWnd( bouquetedit.gui.BouquetEditMainWnd ):
         last = self.bouquets.GetLastChild( parent )
         while child.IsOk():
             e = self.bouquets.GetItemPyData( child )
-            if isinstance( e, bouquetedit.enigma.Bouquet ):
+            if isinstance( e, enigma.Bouquet ):
                 e.name = self.bouquets.GetItemText( child )
                 print( "Add Bouquet: %s %s" % ( e.name, e ) )
                 # Make sure that the BouquetService/BouquetMarker list is empty
                 e.items = []
                 b.items.append( e )
                 self.__put_bouquet_entry( e, child )
-            elif isinstance( e, bouquetedit.enigma.BouquetMarker ):
+            elif isinstance( e, enigma.BouquetMarker ):
                 print( "Add BouquetMarker: %s %s" % ( e.name, e ) )
                 b.items.append( e )
-            elif isinstance( e, bouquetedit.enigma.BouquetService ):
+            elif isinstance( e, enigma.BouquetService ):
                 print( "Add BouquetService: %s %s" % ( e.name, e ) )
                 b.items.append( e )
-            elif isinstance( e, bouquetedit.enigma.Service ):
+            elif isinstance( e, enigma.Service ):
                 print( "Add Service: %s %s" % ( e.name, e ) )
-                b.items.append( bouquetedit.enigma.BouquetService( service = e ) )
+                b.items.append( enigma.BouquetService( service = e ) )
             # end if
             if child == last:
                 return
@@ -575,12 +575,12 @@ class MainWnd( bouquetedit.gui.BouquetEditMainWnd ):
                                               treeItem,
                                               s.cleanname )
             self.bouquets.SetItemPyData( child,
-                                         bouquetedit.enigma.BouquetService( service = s ) )
+                                         enigma.BouquetService( service = s ) )
 
         elif e.type == 'bouquet':
             child = self.bouquets.AppendItem( treeItem, s.cleanname )
             self.bouquets.SetItemPyData( child,
-                                         bouquetedit.enigma.BouquetService( service = s ) )
+                                         enigma.BouquetService( service = s ) )
 
         # end if
         return
@@ -663,7 +663,7 @@ class MainWnd( bouquetedit.gui.BouquetEditMainWnd ):
 
     def clickMenuOpenReceiver( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
         print "Event handler 'clickMenuOpen' not implemented!"
-        wmd = bouquetedit.receiver.OpenReceiver( self, wx.ID_ANY )
+        wmd = receiver.OpenReceiver( self, wx.ID_ANY )
         if wmd.ShowModal() == wx.ID_OK:
             # make sure that its closed
             self.clickMenuClose( event )
@@ -686,7 +686,7 @@ class MainWnd( bouquetedit.gui.BouquetEditMainWnd ):
 
     def clickMenuSaveAsReceiver( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
         print "Event handler 'clickMenuSaveAs' not implemented!"
-        wmd = bouquetedit.receiver.OpenReceiver( self, wx.ID_ANY )
+        wmd = receiver.OpenReceiver( self, wx.ID_ANY )
         if wmd.ShowModal() == wx.ID_OK:
             # Open the receiver box
             pass
@@ -735,7 +735,7 @@ class MainWnd( bouquetedit.gui.BouquetEditMainWnd ):
 
     def clickMenuPreferences( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
         if self.Preferences is None:
-            self.Preferences = bouquetedit.preferencies.Preferences( self.Config, self, wx.ID_ANY )
+            self.Preferences = preferencies.Preferences( self.Config, self, wx.ID_ANY )
         # end if
         self.Preferences.ShowModal()
         return
@@ -747,7 +747,7 @@ class MainWnd( bouquetedit.gui.BouquetEditMainWnd ):
     # end def
 
     def clickMenuAbout( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
-        wnd = bouquetedit.aboutwmd.AboutWnd( self, wx.ID_ANY )
+        wnd = aboutwmd.AboutWnd( self, wx.ID_ANY )
         wnd.ShowModal()
         del wnd
         return
