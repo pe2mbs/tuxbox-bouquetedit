@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf8" ?>
+<config>
+    <SaveTime>2016-02-18 11:20:33</SaveTime>
+    <MainWnd>
+        <wxSize>976, 829</wxSize>
+        <Services>
+            <Column id="0" name="Service" show="True" width="200"/>
+            <Column id="1" name="Profider" show="True" width="130"/>
+            <Column id="2" name="Position" show="True" width="60"/>
+            <Column id="3" name="Frequency" show="True" width="100"/>
+            <Column id="4" name="Symbolrate" show="True" width="100"/>
+            <Column id="5" name="Namespace" show="True" width="80"/>
+            <Column id="6" name="Transponder" show="True" width="200"/>
+        </Services>
+    </MainWnd>
+    <OpenReceiver>
+        <wxTextCtrl name="hostname"/>
+        <wxTextCtrl name="username"/>
+        <wxTextCtrl name="password"/>
+        <wxCheckBox name="saveInPreferences">True</wxCheckBox>
+    </OpenReceiver>
+    <Preferences>
+        <autoload>1</autoload>
+        <wxListCtrl name="receivers">
+            <wxListItem text="ftp://dm7020hd/etc/enigma2">
+                <Column id="1">root</Column>
+                <Column id="2">5701mb</Column>
+                <Column id="3">True</Column>
+            </wxListItem>
+        </wxListCtrl>
+        <wxCheckBox name="hideEmptyServices">True</wxCheckBox>
+        <wxCheckBox name="hideDotServices">True</wxCheckBox>
+        <wxTextCtrl name="hostname"/>
+        <wxTextCtrl name="username"/>
+        <wxTextCtrl name="password"/>
+    </Preferences>
+</config>
