@@ -1,4 +1,3 @@
-import sys
 import wx
 from lxml import etree
 # begin wxGlade: dependencies
@@ -9,58 +8,148 @@ import gui
 __author__ = 'mbertens'
 
 class Preferences( gui.Preferences ):
-    CHECKBOX_COLUMN = 3
+    HOSTNAME_COLUMN = 0
+    PROTOCOL_COLUMN = 1
+    PATH_COLUMN     = 2
+    USERNAME_COLUMN = 3
+    PASSWORD_COLUMN = 4
+    CHECKBOX_COLUMN = 5
     def __init__(self, config, *args, **kwds):
         gui.Preferences.__init__( self, *args, **kwds )
         self.Config = config
         self.receivers.SetSize( ( 777, 337 ) )
-        self.receivers.InsertColumn( 0, 'Hostname' )
-        self.receivers.SetColumnWidth( 0, 400 )
-        self.receivers.InsertColumn( 1, 'Username' )
-        self.receivers.SetColumnWidth( 1, 150 )
-        self.receivers.InsertColumn( 2, 'Password' )
-        self.receivers.SetColumnWidth( 2, 150 )
-        self.receivers.InsertColumn( self.CHECKBOX_COLUMN, 'Auto load' )
+        self.receivers.InsertColumn(   self.HOSTNAME_COLUMN, 'Hostname' )
+        self.receivers.InsertColumn(   self.PROTOCOL_COLUMN, 'Protocol' )
+        self.receivers.InsertColumn(   self.PATH_COLUMN, 'Path' )
+        self.receivers.InsertColumn(   self.USERNAME_COLUMN, 'Username' )
+        self.receivers.InsertColumn(   self.PASSWORD_COLUMN, 'Password' )
+        self.receivers.InsertColumn(   self.CHECKBOX_COLUMN, 'Auto load' )
         self.receivers.SetColumnWidth( self.CHECKBOX_COLUMN, 77 )
+
+        def password_setter( this, editor, row, col ):
+            print( "password_setter( %s, %s, %i, %i )" % ( this, editor, row, col ) )
+            item = self.receivers.GetItem( row, col )
+            element = self.receivers.GetPyData( item )
+            print( "password_setter.value: %s" % ( element.text ) )
+            editor.SetValue( element.text )
+            editor.SetSelection( -1, -1 )
+            return
+        # end def
+
+        def password_getter( this, editor, row, col ):
+            print( "password_getter( %s, %s, %i, %i )" % ( this, editor, row, col ) )
+            item = self.receivers.GetItem( row, col )
+            element = self.receivers.GetPyData( item )
+            element.text = editor.GetValue()
+            print( "password_getter.value: %s" % ( element.text ) )
+            return "*" * len( item.GetText() )
+        # end def
+
+        def choice_setter( this, editor, row, col ):
+            print( "choice_setter( %s, %s, %i, %i )" % ( this, editor, row, col ) )
+            item = self.receivers.GetItem( row, col )
+            print( 'choice_setter (%s): %s' % ( editor, item.GetText() ) )
+            editor.SetSelection( editor.FindString( item.GetText() ) )
+            return
+        # end def
+
+        def choice_getter( this, editor, row, col ):
+            print( "choice_getter( %s, %s, %i, %i )" % ( this, editor, row, col ) )
+            item = self.receivers.GetItem( row, col )
+            text = editor.GetString( editor.GetCurrentSelection() )
+            print( 'choice_getter (%s): %s' % ( editor, text ) )
+            element = this.GetPyData( item )
+            element.text = text
+            return text
+        # end def
+
+        self.ProtocolSelectListBox = None
+        def choice_binder( this, editor ):
+            editor.Bind( wx.EVT_CHOICE, self.OnProtocolSelectListBox )
+            self.ProtocolSelectListBox = editor
+            return
+        # end def
+
+        def autoload_setter( this, editor, row, col ):
+            return
+        # end def
+
+        def autoload_getter( this, editor, row, col ):
+            return ''
+        # end def
+
+        self.receivers.SetColumnEditor( self.PROTOCOL_COLUMN,
+                                        wx.ComboBox,
+                                        choice_binder,
+                                        choice_setter,
+                                        choice_getter,
+                                        id = wx.ID_ANY,
+                                        choices = [ "FTP", "SFTP" ],
+                                        style = wx.CB_DROPDOWN )
+
+        self.receivers.SetColumnEditor( self.PASSWORD_COLUMN,
+                                        wx.TextCtrl,
+                                        None,
+                                        password_setter,
+                                        password_getter,
+                                        id = wx.ID_ANY, style = wx.TE_PASSWORD )
+
+        self.receivers.SetColumnEditor( self.CHECKBOX_COLUMN,
+                                        wx.CheckBox,
+                                        None,
+                                        autoload_setter,
+                                        autoload_getter,
+                                        id = wx.ID_ANY )
         self.load()
         self.sizeColumns()
-        self.receivers.setCheckboxColumn( self.CHECKBOX_COLUMN, self.OnCheckBoxColumn )
+        # self.receivers.setCheckboxColumn( self.CHECKBOX_COLUMN, self.OnCheckBoxColumn )
         return
     # end def
 
     def sizeColumns( self ):
-        self.receivers.SetColumnWidth( 0, 400 )
-        self.receivers.SetColumnWidth( 1, 150 )
-        self.receivers.SetColumnWidth( 2, 150 )
+        self.receivers.SetColumnWidth( self.HOSTNAME_COLUMN, 150 )
+        self.receivers.SetColumnWidth( self.PATH_COLUMN, 150 )
+        self.receivers.SetColumnWidth( self.PROTOCOL_COLUMN, 100 )
+        self.receivers.SetColumnWidth( self.USERNAME_COLUMN, 150 )
+        self.receivers.SetColumnWidth( self.PASSWORD_COLUMN, 150 )
         self.receivers.SetColumnWidth( self.CHECKBOX_COLUMN, 80 )
-        size = ( sum( [ self.receivers.GetColumnWidth( i ) for i in ( 0, 1, 2 ) ] ), -1 )
+        size = ( sum( [ self.receivers.GetColumnWidth( i ) for i in ( 0, 1, 2, 3, 4, 5 ) ] ), -1 )
         self.receivers.SetSize( size )
         self.receivers.SetMinSize( size )
         self.receivers.Update()
         return
     # end def
 
+    def OnProtocolSelectListBox( self, event ):
+        print( "OnProtocolSelectListBox( %s )" % ( repr( event ) ) )
+        self.ProtocolSelectListBox.SetSelection( event.GetInt() )
+        return
+    # end def
+
     def load( self ):
         self.receivers.DeleteAllItems()
-        num_items = self.receivers.GetItemCount()
+        row = self.receivers.GetItemCount()
         items = self.Config.get_x_path( '/config/Preferences/wxListCtrl[@name="receivers"]/wxListItem' )
-        for item in items:
-
-            self.receivers.InsertStringItem( num_items, item.attrib[ 'text' ] )
-            for element in item:
+        for xml_item in items:
+            self.receivers.InsertStringItem( row, xml_item.attrib[ 'text' ] )
+            self.receivers.SetPyData( self.receivers.GetItem( row, 0 ), xml_item )
+            for element in xml_item:
                 id = int( element.attrib[ 'id' ] )
-                if id < 3 and element.text:
-                    self.receivers.SetStringItem( num_items, id, element.text )
+                if id == 4:
+                    self.receivers.SetStringItem( row, id, "*" * len( element.text ) )
+                else:
+                    self.receivers.SetStringItem( row, id, element.text )
                 # end if
+                self.receivers.SetPyData( self.receivers.GetItem( row, id ), element )
             # next
             litem = wx.ListItem()
             litem.SetMask( litem.GetMask( ) | wx.LIST_MASK_IMAGE )
             litem.SetColumn( self.CHECKBOX_COLUMN )
-            litem.SetId( num_items )
-            litem.SetImage( self.receivers.IMG_CHECKED_BOX if item.attrib[ 'autoload' ] == 'True' else self.receivers.IMG_UNCHECKED_BOX )
+            litem.SetId( row )
+            litem.SetImage( self.receivers.IMG_CHECKED_BOX if xml_item.attrib[ 'autoload' ] == 'True' else self.receivers.IMG_UNCHECKED_BOX )
             self.receivers.SetItem( litem )
-            self.receivers.SetPyData( num_items, item )
-            num_items += 1
+            self.receivers.SetPyData( litem, xml_item )
+            row += 1
         # next
         return
     # end def
@@ -70,10 +159,11 @@ class Preferences( gui.Preferences ):
         num_items = self.receivers.GetItemCount()
         receivers = self.Config.get_x_path( '/config/Preferences/wxListCtrl[@name="receivers"]', False )
         for idx in range( num_items ):
-            item = self.receivers.GetPyData( idx )
+            hItem   = self.receivers.GetItem( idx, 0 )
+            item    = self.receivers.GetPyData( hItem )
             if item is not None:
                 # Handle existing entry
-                item.attrib[ 'text' ] = self.receivers.GetItemText( idx )
+                item.attrib[ 'text' ] = hItem.GetText()
                 cItem = self.receivers.GetItem( idx, self.CHECKBOX_COLUMN )
                 item.attrib[ 'autoload' ] = "True" if cItem.GetImage() == self.receivers.IMG_CHECKED_BOX else "False"
                 for element in item:
@@ -85,10 +175,10 @@ class Preferences( gui.Preferences ):
                 # Handle NEW entry
                 child = etree.SubElement( receivers, "wxListItem" )
                 self.receivers.SetPyData( idx, child )
-                child.attrib[ 'text' ] = self.receivers.GetItemText( idx )
+                child.attrib[ 'text' ] = hItem.GetText()
                 cItem = self.receivers.GetItem( idx, self.CHECKBOX_COLUMN )
                 child.attrib[ 'autoload' ] = "True" if cItem.GetImage() == self.receivers.IMG_CHECKED_BOX else "False"
-                for col in range( 1, 3 ):
+                for col in range( self.PATH_COLUMN, self.CHECKBOX_COLUMN ):
                     child1 = etree.SubElement( child, "Column" )
                     child1.attrib[ 'id' ] = str( col )
                     lItem = self.receivers.GetItem( idx, col )
@@ -105,7 +195,7 @@ class Preferences( gui.Preferences ):
         for idx in range( num_items ):
             cItem = self.receivers.GetItem( idx, self.CHECKBOX_COLUMN )
             cItem.SetMask( cItem.GetMask( ) | wx.LIST_MASK_IMAGE )
-            cItem.SetImage( 0 )
+            cItem.SetImage( self.receivers.IMG_UNCHECKED_BOX )
             self.receivers.SetItem( cItem )
         # next
         return
@@ -113,7 +203,7 @@ class Preferences( gui.Preferences ):
 
     def OnCheckBoxColumn( self, item ):
         self.__clearCheckboxes()
-        item.SetImage( 1 )
+        item.SetImage( self.receivers.IMG_CHECKED_BOX )
         item.SetMask( item.GetMask( ) | wx.LIST_MASK_IMAGE )
         self.receivers.SetItem( item )
         return
@@ -141,9 +231,10 @@ class Preferences( gui.Preferences ):
         # end if
         num_items = self.receivers.GetItemCount()
         self.receivers.InsertStringItem( num_items, self.hostname.Value )
-        self.receivers.SetStringItem( num_items, 1, self.username.Value )
-        self.receivers.SetStringItem( num_items, 2, self.password.Value )
-
+        self.receivers.SetStringItem( num_items, self.PROTOCOL_COLUMN, self.protocol.Value )
+        self.receivers.SetStringItem( num_items, self.PATH_COLUMN, self.path.Value )
+        self.receivers.SetStringItem( num_items, self.USERNAME_COLUMN, self.username.Value )
+        self.receivers.SetStringItem( num_items, self.PASSWORD_COLUMN, self.password.Value )
         litem = wx.ListItem()
         litem.SetMask( litem.GetMask( ) | wx.LIST_MASK_IMAGE )
         litem.SetColumn( self.CHECKBOX_COLUMN )
@@ -151,7 +242,7 @@ class Preferences( gui.Preferences ):
         litem.SetImage( self.receivers.IMG_CHECKED_BOX if self.autoload.Value else self.receivers.IMG_UNCHECKED_BOX )
         self.receivers.SetItem( litem )
         # Mark new element
-        self.receivers.SetPyData( num_items, None )
+        self.receivers.SetPyData( litem, None )
         return
     # end def
 

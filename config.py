@@ -62,21 +62,25 @@ class Config( object ):
     # end def
 
     def getAutoLoadReceiver( self ):
+        result = {}
         item = self.tree.xpath( '/config/Preferences/wxListCtrl[@name="receivers"]/wxListItem[@autoload="True"]' )
         if item:
             if len( item ) == 1:
                 item = item[ 0 ]
             # end if
-            passwd      = ''
-            username    = ''
+            result[ 'hostname' ] = item.attrib[ 'text' ]
             for element in item:
                 if element.attrib[ 'id' ] == '1' and element.text:
-                    username = element.text
+                    result[ 'protocol' ] = element.text
                 elif element.attrib[ 'id' ] == '2' and element.text:
-                    passwd = element.text
+                    result[ 'path' ] = element.text
+                if element.attrib[ 'id' ] == '3' and element.text:
+                    result[ 'username' ] = element.text
+                elif element.attrib[ 'id' ] == '4' and element.text:
+                    result[ 'password' ] = element.text
                 # end if
             # next
-            return ( item.attrib[ 'text' ], username, passwd )
-        return None
+        # end if
+        return result
     # end def
 # end class

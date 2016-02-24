@@ -107,7 +107,7 @@ class MainWnd( gui.BouquetEditMainWnd ):
         # end try
         autoload = self.Config.getAutoLoadReceiver()
         if autoload:
-            self.__streaming_host = autoload[ 0 ].split( '//' )[ 1 ].split('/')[ 0 ]
+            self.__streaming_host = autoload[ 'hostname' ]
             self.Populate( autoload )
         # end if
         return
@@ -324,12 +324,19 @@ class MainWnd( gui.BouquetEditMainWnd ):
     # end def
 
     def Populate( self, hostinfo ):
-        print( "Loading from %s with user %s:%s" % ( hostinfo[ 0 ], hostinfo[ 1 ], hostinfo[ 2 ] ) )
+        print( "Loading from %s://%s%s with user %s:%s" % ( hostinfo[ 'protocol' ],
+                                                            hostinfo[ 'hostname' ],
+                                                            hostinfo[ 'path' ],
+                                                            hostinfo[ 'username' ],
+                                                            hostinfo[ 'password' ] ) )
         self.frame_2_statusbar.PushStatusText( "Host: %s" % ( self.__streaming_host ), 1 )
         self.frame_2_statusbar.PushStatusText( "Loading", 2 )
         # read the LAMEDB for all services and bouquets
-        protocol, hostname = hostinfo[ 0 ].split( '//' )
-        self.engima.load( "%s//%s:%s@%s" % ( protocol, hostinfo[ 1 ], hostinfo[ 2 ], hostname ) )
+        self.engima.load( "%s://%s:%s@%s%s" % ( hostinfo[ 'protocol' ],
+                                               hostinfo[ 'username' ],
+                                               hostinfo[ 'password' ],
+                                               hostinfo[ 'hostname' ],
+                                               hostinfo[ 'path' ] ) )
         # populate the list control
         self.__sortColumn = self.COLUMN_SERVICE_NAME
         self.clickClearFilter( None )

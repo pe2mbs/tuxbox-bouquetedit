@@ -22,10 +22,11 @@
     <Preferences>
         <autoload>1</autoload>
         <wxListCtrl name="receivers">
-            <wxListItem text="ftp://dm7020hd/etc/enigma2">
-                <Column id="1">root</Column>
-                <Column id="2">5701mb</Column>
-                <Column id="3">True</Column>
+            <wxListItem text="dm7020hd" autoload="True">
+                <Column id="1">FTP</Column>
+                <Column id="2">/etc/enigma2</Column>
+                <Column id="3">root</Column>
+                <Column id="4">5701mb</Column>
             </wxListItem>
         </wxListCtrl>
         <wxCheckBox name="hideEmptyServices">True</wxCheckBox>

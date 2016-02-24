@@ -10,6 +10,8 @@ I thank "spacedentist" and his project enigma2-bouqueteditor, the enigma2.py mod
 the service list and bouquets. 
 
 All through this is build on a Linux system, it should run on Windows and Mac.  
+The gui is designed with wxGlade.
+
 
 # Usage:
 When starting the application and a receiver is set to autoload, the application will load the channels and bouquets from the receiver.
@@ -45,6 +47,8 @@ When starting the application and a receiver is set to autoload, the application
 6.	Printer setup and print.
 7.  Help system.
 8.  Improve the preferences dialog
+9.	Add multiple languages
+
 
 # Issues
 1.	Sometimes in filter mode on ASC mode services disapear
