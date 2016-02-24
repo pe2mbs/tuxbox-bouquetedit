@@ -108,7 +108,7 @@ class MainWnd( gui.BouquetEditMainWnd ):
         autoload = self.Config.getAutoLoadReceiver()
         if autoload:
             self.__streaming_host = autoload[ 'hostname' ]
-            self.Populate( autoload )
+            self.LoadFromHost( autoload )
         # end if
         return
     # end def
@@ -323,20 +323,26 @@ class MainWnd( gui.BouquetEditMainWnd ):
         return 'unknown'
     # end def
 
-    def Populate( self, hostinfo ):
-        print( "Loading from %s://%s%s with user %s:%s" % ( hostinfo[ 'protocol' ],
-                                                            hostinfo[ 'hostname' ],
-                                                            hostinfo[ 'path' ],
-                                                            hostinfo[ 'username' ],
-                                                            hostinfo[ 'password' ] ) )
-        self.frame_2_statusbar.PushStatusText( "Host: %s" % ( self.__streaming_host ), 1 )
+    def LoadFromFolder( self, folder ):
+        self.frame_2_statusbar.PushStatusText( "Folder: %s" % ( folder ), 1 )
+        self.Populate( folder )
+    # end def
+
+    def LoadFromHost( self, hostinfo ):
+        hostpath = "%s://%s:%s@%s%s" % ( hostinfo[ 'protocol' ],
+                                         hostinfo[ 'username' ],
+                                         hostinfo[ 'password' ],
+                                         hostinfo[ 'hostname' ],
+                                         hostinfo[ 'path' ] )
+        self.frame_2_statusbar.PushStatusText( "Host: %s" % ( hostpath ), 1 )
+        self.Populate( hostpath )
+        return
+    # end def
+
+    def Populate( self, hostpath ):
         self.frame_2_statusbar.PushStatusText( "Loading", 2 )
         # read the LAMEDB for all services and bouquets
-        self.engima.load( "%s://%s:%s@%s%s" % ( hostinfo[ 'protocol' ],
-                                               hostinfo[ 'username' ],
-                                               hostinfo[ 'password' ],
-                                               hostinfo[ 'hostname' ],
-                                               hostinfo[ 'path' ] ) )
+        self.engima.load( hostpath )
         # populate the list control
         self.__sortColumn = self.COLUMN_SERVICE_NAME
         self.clickClearFilter( None )
@@ -354,8 +360,6 @@ class MainWnd( gui.BouquetEditMainWnd ):
         self.__add_bouquet_entry( self.__bouquets,
                                   self.bouquets.GetRootItem(),
                                   self.bouquet_choice.GetLabelText() )
-
-
         return
     # end def
 
@@ -382,8 +386,8 @@ class MainWnd( gui.BouquetEditMainWnd ):
         return
     # end def
 
-    def Save(self):
-        self.__bouquets = enigma.Bouquet()
+    def Save( self ):
+        self.__bouquets = enigma.Bouquet( name = 'User - bouquets (TV)', toplevel = '' )
         self.__put_bouquet_entry( self.__bouquets,
                                   self.bouquets.GetRootItem() )
         for item in self.__bouquets.items:
@@ -395,6 +399,25 @@ class MainWnd( gui.BouquetEditMainWnd ):
                     print( "   %s" % ( repr( bouquetitem.name ) ) )
             # next
         # next
+        return
+    # end def
+
+    def SaveAs( self, as_folder ):
+        self.__bouquets = enigma.Bouquet( name = 'User - bouquets (TV)', toplevel = '' )
+        self.__put_bouquet_entry( self.__bouquets,
+                                  self.bouquets.GetRootItem() )
+        for item in self.__bouquets.items:
+            print( "Bouquet: %s" % ( item.name ) )
+            for bouquetitem in item.items:
+                if bouquetitem.type == 'service_entry':
+                    print( "   %s" % ( repr( bouquetitem.service.name ) ) )
+                elif bouquetitem.type == 'marker':
+                    print( "   %s" % ( repr( bouquetitem.name ) ) )
+            # next
+        # next
+        self.engima.bouquets[ 'tv' ] = self.__bouquets
+        print( as_folder )
+        self.engima.save( as_folder )
         return
     # end def
 
@@ -665,38 +688,72 @@ class MainWnd( gui.BouquetEditMainWnd ):
     # end def
 
     def clickMenuOpenFolder( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
-        print "Event handler 'clickMenuOpen' not implemented!"
-        event.Skip()
+        dlg = wx.DirDialog( self,
+                            "Select directory to load from..",
+                            "~/",
+                            0,
+                            ( 10, 10 ),
+                            wx.Size( 400, 300 ) )
+        result = dlg.ShowModal()
+        dlg.Destroy()
+        if result == wx.ID_OK:          #Save button was pressed
+            self.LoadFromFolder( dlg.GetPath() )
+        # end if
+        return
+    # end def
 
     def clickMenuOpenReceiver( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
-        print "Event handler 'clickMenuOpen' not implemented!"
         wmd = receiver.OpenReceiver( self, wx.ID_ANY )
         if wmd.ShowModal() == wx.ID_OK:
             # make sure that its closed
             self.clickMenuClose( event )
             # Open the receiver box
-            self.__streaming_host = wmd.hostname.Value.split( '//' )[ 1 ].split('/')[ 0 ]
-            self.Populate( ( wmd.hostname.Value,
-                             wmd.username.Value,
-                             wmd.password.Value ) )
+            self.__streaming_host   = wmd.hostname.Value
+            hostinfo = {}
+            hostinfo[ 'protocol' ]  = 'ftp'
+            hostinfo[ 'username' ]  = wmd.username.Value
+            hostinfo[ 'password' ]  = wmd.password.Value
+            hostinfo[ 'hostname' ]  = wmd.hostname.Value
+            hostinfo[ 'path' ]      = wmd.path.Value
+            self.Populate( hostinfo )
         # end if
         return
     # end def
 
     def clickMenuSave( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
-        print "Event handler 'clickMenuSave' not implemented!"
-        event.Skip()
+        self.Save()
+        return
+    # end def
 
     def clickMenuSaveAsFolder( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
-        print "Event handler 'clickMenuSaveAs' not implemented!"
-        event.Skip()
+        dlg = wx.DirDialog( self,
+                            "Select directory to save to..",
+                            "~/",
+                            0,
+                            ( 10, 10 ),
+                            wx.Size( 400, 300 ) )
+        result = dlg.ShowModal()
+        dlg.Destroy()
+        if result == wx.ID_OK:          #Save button was pressed
+            self.SaveAs( dlg.GetPath() )
+        # end if
+        return
+    # end def
 
     def clickMenuSaveAsReceiver( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
-        print "Event handler 'clickMenuSaveAs' not implemented!"
         wmd = receiver.OpenReceiver( self, wx.ID_ANY )
         if wmd.ShowModal() == wx.ID_OK:
+            # make sure that its closed
+            self.clickMenuClose( event )
             # Open the receiver box
-            pass
+            self.__streaming_host   = wmd.hostname.Value
+            hostinfo = {}
+            hostinfo[ 'protocol' ]  = 'ftp'
+            hostinfo[ 'username' ]  = wmd.username.Value
+            hostinfo[ 'password' ]  = wmd.password.Value
+            hostinfo[ 'hostname' ]  = wmd.hostname.Value
+            hostinfo[ 'path' ]      = wmd.path.Value
+            self.LoadFromHost( hostinfo )
         # end if
         return
     # end def

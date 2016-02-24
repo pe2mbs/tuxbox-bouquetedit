@@ -213,6 +213,12 @@ class Bouquet( BouquetEntry ):
         if not getattr( self, 'items', None ):
             self.items = []
         # end if
+        if 'toplevel' not in kw:
+            self.istoplevel = True
+        # end if
+        if 'name' not in kw:
+            self.name = ''
+        # end if
         return
     # end def
 # end class
@@ -259,66 +265,66 @@ class Enigma2( object ):
             # end if
             line2, line3 = f.readline(), f.readline()
             assert line3 == '/\n'
-            info = line.strip().split(':')
-            medium, info2 = line2.strip().split()
-            info2 = info2.split(':')
+            info            = line.strip().split( ':' )
+            medium, info2   = line2.strip().split()
+            info2           = info2.split( ':'s )
             if medium == 's':
                 t = SatelliteTransponder(
-                    id = 't{0}'.format(len(self.transponders)),
-                    namespace = int(info[0], 16),
-                    tsid = int(info[1], 16),
-                    nid = int(info[2], 16),
-                    freq = int(info2[0]),
-                    symbrate = int(info2[1]),
-                    pol = int(info2[2]),
-                    fec = int(info2[3]),
-                    pos = int(info2[4]),
-                    inv = int(info2[5]),
-                    flags = int(info2[6]),
-                    system = int(info2[7]) if len(info2)>=11 else None,
-                    modulation = int(info2[8]) if len(info2)>=11 else None,
-                    rolloff = int(info2[9]) if len(info2)>=11 else None,
-                    pilot = int(info2[10]) if len(info2)>=11 else None,
+                    id = 't{0}'.format( len( self.transponders ) ),
+                    namespace   = int( info[ 0 ], 16 ),
+                    tsid        = int( info[ 1 ], 16 ),
+                    nid         = int( info[ 2 ], 16 ),
+                    freq        = int( info2[ 0 ] ),
+                    symbrate    = int( info2[ 1 ] ),
+                    pol         = int( info2[ 2 ] ),
+                    fec         = int( info2[ 3 ] ),
+                    pos         = int( info2[ 4 ] ),
+                    inv         = int( info2[ 5 ] ),
+                    flags       = int( info2[ 6 ] ),
+                    system      = int( info2[ 7 ] ) if len(info2)>=11 else None,
+                    modulation  = int( info2[ 8 ] ) if len(info2)>=11 else None,
+                    rolloff     = int( info2[ 9 ] ) if len(info2)>=11 else None,
+                    pilot       = int( info2[ 10 ] ) if len(info2)>=11 else None,
                 )
             else:
-                sys.stderr.write("Unsupported medium {0!r}\n".format(medium))
+                sys.stderr.write( "Unsupported medium {0!r}\n".format( medium ) )
                 continue
             # end if
-            self.transponders[t.id] = t
+            self.transponders[ t.id ] = t
         # end while
-        assert(f.readline() == 'services\n')
+        assert( f.readline() == 'services\n' )
         while True:
             line = f.readline()
             if not line or line == 'end\n':
                 break
             # end if
             line2, line3 = f.readline(), f.readline()
-            info = line.strip().split(':')
-            name = line2.strip().decode('utf8')
-            t = Transponder.find(self.transponders,
-                    namespace = int(info[1], 16),
-                    tsid = int(info[2], 16),
-                    nid = int(info[3], 16),
-                    )
+            info = line.strip().split( ':' )
+            name = line2.strip().decode( 'utf8' )
+            t = Transponder.find( self.transponders,
+                                  namespace = int( info[ 1 ], 16 ),
+                                  tsid      = int( info[ 2 ], 16),
+                                  nid       = int( info[ 3 ], 16 ), )
             if t is None:
                 sys.stderr.write('Service {0!r} references undefined transponder\n'.format(name))
                 continue
             # end if
             s = Service(
-                id = 's{0}'.format(len(self.services)),
-                sid = int(info[0], 16),
+                id          = 's{0}'.format( len( self.services ) ),
+                sid         = int( info[ 0 ], 16 ),
                 transponder = t,
-                servicetype = int(info[4]),
-                number = int(info[5]),
-                name = name,
-                extra = line3.strip().decode('utf8'),
+                servicetype = int( info[ 4 ] ),
+                number      = int( info[ 5 ] ),
+                name        = name,
+                extra       = line3.strip().decode( 'utf8' ),
             )
-            self.services[s.id] = s
+            self.services[ s.id ] = s
         # end while
         ## bouquets
 
         self.bouquets = {}
-        self.bouquets['tv'] = self._read_bouquet(Open, 'bouquets.tv')
+        self.bouquets[ 'tv' ]     = self._read_bouquet( Open, 'bouquets.tv' )
+        self.bouquets[ 'radio' ]  = self._read_bouquet( Open, 'bouquets.radio' )
         print( "enigma.load() exit" )
     # end def
 
@@ -459,25 +465,25 @@ class Enigma2( object ):
         for b in bouquets:
             if b.filename is None:
                 basename = '{0}.{1}'.format(
-                    ('bouquets' if getattr(b, 'istoplevel', False) else 'userbouquet'),
-                    urllib.quote(b.name.lower().replace(' ', '_'), ''),
+                    ('bouquets' if getattr( b, 'istoplevel', False ) else 'userbouquet'),
+                    urllib.quote( b.name.lower().replace( ' ', '_' ), '' ),
                     )
-                filename = '{0}.{1}'.format(basename, b.toplevel)
+                filename = '{0}.{1}'.format( basename, b.toplevel )
                 ctr = 0
                 while filename in bfilenames:
-                    filename = '{0}_{1}.{2}'.format(basename, ctr, b.toplevel)
+                    filename = '{0}_{1}.{2}'.format( basename, ctr, b.toplevel )
                     ctr += 1
                 # end while
-                bfilenames.add(filename)
+                bfilenames.add( filename )
                 b.filename = filename
             # end if
         # next
         for b in bouquets:
-            out = open(os.path.join(location, b.filename), 'w')
-            out.write('#NAME {0}\n'.format(b.name.encode('utf8')))
+            out = open( os.path.join( location, b.filename ), 'w' )
+            out.write( '#NAME {0}\n'.format( b.name.encode( 'utf8' ) ) )
             markernum = 0
             for i in b.items:
-                if isinstance(i, BouquetService):
+                if isinstance( i, BouquetService ):
                     s = i.service
                     if hasattr( s, 'cleanname' ):
                         cleanname   = ":%s" % ( s.cleanname.encode('ascii',errors='replace' ) )
@@ -496,7 +502,7 @@ class Enigma2( object ):
                     out.write( '#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "{0}" ORDER BY bouquet\n'.format( i.filename ) )
                 elif isinstance( i, BouquetMarker ):
                     markernum += 1
-                    out.write( '#SERVICE 1:64:{0:X}:0:0:0:0:0:0:0::{1}\n#DESCRIPTION {1}\n'.format( markernum, i.name ) )
+                    out.write( '#SERVICE 1:64:{0:X}:0:0:0:0:0:0:0::{1}\n#DESCRIPTION {1}\n'.format( markernum, i.name.encode( 'ascii', errors='ignore' ) ) )
                 # end if
             # next
             del out
@@ -519,7 +525,7 @@ class Enigma2( object ):
                 searchidx[ term ].add( id )
             # next
         # next
-        self._searchterms = []
+        self._searchterms   = []
         self._searchindexes = []
         for term, ids in sorted( searchidx.iteritems(), lambda a, b: cmp( a[ 0 ], b[ 0 ] ) ):
             self._searchterms.append( term )

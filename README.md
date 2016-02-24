@@ -37,16 +37,20 @@ When starting the application and a receiver is set to autoload, the application
 	CTRL-DOWN				move item down in the tree.
 	DELETE					Remove item from the list.
 	
+# Last updates
+1.	Now Save As bouquets to folder works.
+2.	Now Save bouquets to folder works.
+3.	Some improvements to the preferences dialog where made, but stil not complete.
 
 # Todo
-1.	Save bouquets (receiver/folder).
-2.	Save As bouquets (receiver/folder).
+1.	Save bouquets (receiver).
+2.	Save As bouquets (receiver).
 3.	Bouquet "Drag and Drop". 
 4.	"Drag and Drop" service to bouquet.
 5.	Handle radio channels.
 6.	Printer setup and print.
 7.  Help system.
-8.  Improve the preferences dialog
+8.  Improve further the preferences dialog
 9.	Add multiple languages
 
 
