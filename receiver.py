@@ -13,24 +13,38 @@ class OpenReceiver( gui.OpenReceiver ):
         return
     # end def
 
+    def OpenLocation( self ):
+        self.Title = 'Open receiver...'
+        self.saveInPreferences.Show()
+        if self.ShowModal() == wx.ID_OK:
+            return True
+        # end def
+        return False
+
+    def SaveAsLocation( self ):
+        self.Title = 'Save to receiver...'
+        self.saveInPreferences.Hide()
+        if self.ShowModal() == wx.ID_OK:
+            return True
+        # end def
+        return False
+    # end def
+
+    def GetHostInfo( self ):
+        hostinfo = {}
+        hostinfo[ 'protocol' ]  = self.protocol.GetLabelText()
+        hostinfo[ 'username' ]  = self.username.Value
+        hostinfo[ 'password' ]  = self.password.Value
+        hostinfo[ 'hostname' ]  = self.hostname.Value
+        hostinfo[ 'path' ]      = self.path.Value
+        return hostinfo
+    # end def
+
     def clickOpen( self, event ):
-        try:
-            protocol, hosturl = self.hostname.Value.split(':')
-            if hosturl[0:2] != u'//':
-                raise Exception( 'incorrect format: // before hostname missing' )
-            # end if
-            hosturl = hosturl[ 2 : ]
-            hostname, folder = hosturl.split( '/', 1 )
-        except Exception, exc:
-            wx.MessageBox( 'hostname must have to following format:\n'
-                           '<protocol>://<hostname>/<path>\n%s' % ( exc.message ),
-                           'Error', wx.ID_OK )
-            return
-        # end try
-        if protocol == 'ftp':   # FTP   port 21
+        if self.protocol.GetSelection() == 0:   # FTP   port 21
             from ftplib import FTP
             try:
-                ftp = FTP( hostname )
+                ftp = FTP( self.hostname.Value )
                 ftp.login( self.username.Value, self.password.Value )
                 ftp.close()
             except Exception, exc:
@@ -41,12 +55,10 @@ class OpenReceiver( gui.OpenReceiver ):
                 # end if
                 return
             # end try
-        elif protocol == 'smb': # samba port ?
-            pass
-        elif protocol == 'sftp': # SSH/SFTP port 22
+        elif self.protocol.GetSelection() == 1: # SSH/SFTP port 22
             from ftplib import FTP_TLS
             try:
-                ftps = FTP_TLS( hostname )
+                ftps = FTP_TLS( self.hostname.Value )
                 ftps.login( self.username.Value, self.password.Value )
                 ftps.prot_p()
                 ftps.close()
@@ -62,7 +74,7 @@ class OpenReceiver( gui.OpenReceiver ):
             wx.MessageBox( 'Invalid protocol selected', 'Error', wx.ID_OK )
             return
         # end def
-        if self.saveInPreferences.IsChecked():
+        if self.saveInPreferences.IsShown() and self.saveInPreferences.IsChecked():
             pass
         # end if
         self.EndModal( wx.ID_OK )

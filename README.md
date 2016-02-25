@@ -41,19 +41,21 @@ When starting the application and a receiver is set to autoload, the application
 1.	Now Save As bouquets to folder works.
 2.	Now Save bouquets to folder works.
 3.	Some improvements to the preferences dialog where made, but stil not complete.
+4.	Radio channels now implemented
+5.	Solved the issue "Sometimes in filter mode on ASC mode services disapear"
+
 
 # Todo
-1.	Save bouquets (receiver).
-2.	Save As bouquets (receiver).
+1.	Save bouquets (receiver) it must be tested, it should work already.
+2.	Save As bouquets (receiver) it must be tested, it should work already.
 3.	Bouquet "Drag and Drop". 
 4.	"Drag and Drop" service to bouquet.
-5.	Handle radio channels.
-6.	Printer setup and print.
-7.  Help system.
-8.  Improve further the preferences dialog
-9.	Add multiple languages
+5.	Printer setup and print.
+6.  Help system.
+7.  Improve further the preferences dialog
+8.	Add multiple languages
 
 
 # Issues
-1.	Sometimes in filter mode on ASC mode services disapear
+
  

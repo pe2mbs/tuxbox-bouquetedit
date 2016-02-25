@@ -267,7 +267,7 @@ class Enigma2( object ):
             assert line3 == '/\n'
             info            = line.strip().split( ':' )
             medium, info2   = line2.strip().split()
-            info2           = info2.split( ':'s )
+            info2           = info2.split( ':' )
             if medium == 's':
                 t = SatelliteTransponder(
                     id = 't{0}'.format( len( self.transponders ) ),
@@ -344,54 +344,59 @@ class Enigma2( object ):
                 # as seen in Enigma sources: stop reading this file upon empty line
                 break
             # end if
-            if not line[0]=='#':
+            if not line[ 0 ] == '#':
                 continue
             # end if
             if line.startswith('#SERVICE'):
-                item = None
-                serv = line[8:]
-                serv = (serv[1:] if serv.startswith(':') else serv).strip()
-                serv = serv.split(':', 11)
-                type = int(serv[0])
-                flags = int(serv[1])
-                data = tuple(int(x, 16) for x in serv[2:10])
-                path = _e2decode(serv[10])
-                name = (_e2decode(serv[11]).decode('utf8')) if len(serv)>11 else None
+                item    = None
+                serv    = line[ 8 : ]
+                serv    = ( serv[ 1 : ] if serv.startswith( ':' ) else serv ).strip()
+                serv    = serv.split( ':', 11 )
+                type    = int( serv[ 0 ] )
+                flags   = int( serv[ 1 ] )
+                data    = tuple( int( x, 16 ) for x in serv[ 2 : 10 ] )
+                path    = _e2decode( serv[ 10 ] )
+                name    = (_e2decode( serv[ 11 ] ).decode( 'utf8' ) ) if len( serv ) > 11 else None
 
                 if flags & 1: # subdirectory
                     if '/' in path:
-                        path = path[path.rfind('/')+1:]
+                        path = path[ path.rfind('/') + 1 : ]
                     else:
-                        res = _re_frombouquet.search(path)
+                        res = _re_frombouquet.search( path )
                         if res:
-                            path = res.group(1)
+                            path = res.group( 1 )
                         else:
-                            sys.stderr.write("No path given for bouquet ({0!r})\n".format(line))
+                            sys.stderr.write( "No path given for bouquet ({0!r})\n".format( line ) )
                             continue
                         # end if
-                        b.items.append(self._read_bouquet(Open, path))
+                        b.items.append( self._read_bouquet( Open, path ) )
                     # end if
                 # end if
                 if flags == 0:
                     # regular service
-                    service = Service.find(self.services, data[1], data[4], data[2], data[3])
+                    service = Service.find( self.services,
+                                            data[ 1 ],
+                                            data[ 4 ],
+                                            data[ 2 ],
+                                            data[ 3 ] )
                     if service:
-                        item = BouquetService(service = service, name = name if name else None)
-                        b.items.append(item)
+                        item = BouquetService( service = service,
+                                               name = name if name else None )
+                        b.items.append( item )
                     else:
-                        sys.stderr.write("Bouquet references unknown service ({0!r})\n".format(line))
+                        sys.stderr.write( "Bouquet references unknown service ({0!r})\n".format( line ) )
                     # end if
                 elif flags == 64:
                     # marker
-                    b.items.append(BouquetMarker(name=name))
+                    b.items.append( BouquetMarker( name = name ) )
                 # end if
             elif line.startswith( '#DESCRIPTION' ):
-                desc = line[12:].decode('utf8')
+                desc = line[ 12 : ].decode( 'utf8' )
                 if item:
-                    item.name = (desc[1:] if desc.startswith(':') else desc).strip()
+                    item.name = ( desc[ 1 : ] if desc.startswith( ':' ) else desc ).strip()
                 # end if
             elif line.startswith( '#NAME ' ):
-                b.name = line[6:].decode( 'utf8' )
+                b.name = line[ 6 : ].decode( 'utf8' )
             # end if
         # next
         return b

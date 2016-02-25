@@ -21,6 +21,7 @@ class MainWnd( gui.BouquetEditMainWnd ):
     COLUMN_SERVICE_SYMBOLRATE       = 4
     COLUMN_SERVICE_NAMESPACE        = 5
     COLUMN_SERVICE_TRANSPONDER      = 6
+    COLUMN_SERVICE_TYPE             = 7
     POPUP_MENU_ALL                  = wx.NewId()
     BOUQUET_ITEM_MARKER_INS_BEFORE  = wx.NewId()
     BOUQUET_ITEM_MARKER_INS_AFTER   = wx.NewId()
@@ -133,7 +134,6 @@ class MainWnd( gui.BouquetEditMainWnd ):
 
             # end if
             self.bouquets.Delete( treeItem )
-            self.Save()
         # end if
         return
     # end def
@@ -157,7 +157,6 @@ class MainWnd( gui.BouquetEditMainWnd ):
 
             # end if
         # end if
-        self.Save()
         self.bouquets.Refresh()
         self.bouquets.SelectItem( child )
         self.bouquets.EditLabel( child )
@@ -208,7 +207,6 @@ class MainWnd( gui.BouquetEditMainWnd ):
 
                 # end if
                 self.bouquets.Delete( treeItem )
-                self.Save()
                 return
             elif event.Id == self.BOUQUET_ITEM_MARKER_EDIT:
                 if e.type == 'marker':
@@ -256,7 +254,6 @@ class MainWnd( gui.BouquetEditMainWnd ):
 
                 # end if
             # end if
-            self.Save()
             self.bouquets.Refresh()
             self.bouquets.SelectItem( child )
             self.bouquets.EditLabel( child )
@@ -319,12 +316,29 @@ class MainWnd( gui.BouquetEditMainWnd ):
             return self.__items[ item ].namespace
         elif col == self.COLUMN_SERVICE_TRANSPONDER:
             return self.__items[ item ].transponder_info
+        elif col == self.COLUMN_SERVICE_TYPE:
+            if self.__items[ item ].servicetype == 1:
+                return "Television"
+            elif self.__items[ item ].servicetype == 2:
+                return "Radio"
+            return str( self.__items[ item ].servicetype )
         # end if
         return 'unknown'
     # end def
 
+    def SetTitle( self, title = None ):
+        if title is not None:
+            titleStr = 'TuxBox - bouquet  editor (%s)' % ( title )
+        else:
+            titleStr = 'TuxBox - bouquet  editor'
+        # end if
+        gui.BouquetEditMainWnd.SetTitle( self, titleStr )
+        return
+    # end def
+
     def LoadFromFolder( self, folder ):
         self.frame_2_statusbar.PushStatusText( "Folder: %s" % ( folder ), 1 )
+        self.SetTitle( folder )
         self.Populate( folder )
     # end def
 
@@ -334,6 +348,7 @@ class MainWnd( gui.BouquetEditMainWnd ):
                                          hostinfo[ 'password' ],
                                          hostinfo[ 'hostname' ],
                                          hostinfo[ 'path' ] )
+        self.SetTitle( hostinfo[ 'hostname' ] )
         self.frame_2_statusbar.PushStatusText( "Host: %s" % ( hostpath ), 1 )
         self.Populate( hostpath )
         return
@@ -354,12 +369,22 @@ class MainWnd( gui.BouquetEditMainWnd ):
             # end if
         # end def
         self.bouquet_choice.SetSelection( 0 )
-        item = self.bouquets.AddRoot( 'root' )
-        self.bouquets.SetItemPyData( item, self.engima.bouquets[ 'tv' ] )
-        self.__bouquets = self.engima.bouquets[ 'tv' ]
-        self.__add_bouquet_entry( self.__bouquets,
-                                  self.bouquets.GetRootItem(),
+        root = self.bouquets.AddRoot( 'root' )
+        # TV bouquets
+        self.tv_root = self.bouquets.AppendItem( root, 'Television' )
+        self.bouquets.SetItemPyData( self.tv_root, self.engima.bouquets[ 'tv' ] )
+        self.__bouquets_tv = self.engima.bouquets[ 'tv' ]
+        self.__add_bouquet_entry( self.__bouquets_tv,
+                                  self.tv_root,
                                   self.bouquet_choice.GetLabelText() )
+        self.bouquets.Expand( self.tv_root )
+        # Radio bouquets
+        self.radio_root = self.bouquets.AppendItem( root, 'Radio' )
+        self.__bouquets_radio = self.engima.bouquets[ 'radio' ]
+        self.__add_bouquet_entry( self.__bouquets_radio,
+                                  self.radio_root,
+                                  self.bouquet_choice.GetLabelText() )
+        self.bouquets.Expand( self.radio_root )
         return
     # end def
 
@@ -369,7 +394,6 @@ class MainWnd( gui.BouquetEditMainWnd ):
                 item = self.bouquets.AppendItem( tree, e.name )
                 self.bouquets.SetItemBackgroundColour( item, "red" )
                 self.bouquets.SetItemTextColour( item, "white" )
-
                 self.bouquets.SetPyData( item, e )
                 self.__add_bouquet_entry( e, item, selected )
                 self.bouquets.ExpandAllChildren( item )
@@ -386,11 +410,10 @@ class MainWnd( gui.BouquetEditMainWnd ):
         return
     # end def
 
-    def Save( self ):
-        self.__bouquets = enigma.Bouquet( name = 'User - bouquets (TV)', toplevel = '' )
-        self.__put_bouquet_entry( self.__bouquets,
-                                  self.bouquets.GetRootItem() )
-        for item in self.__bouquets.items:
+    def __buildBouquet( self, title, root_element ):
+        bouquets = enigma.Bouquet( name = title, toplevel = '' )
+        self.__put_bouquet_entry( bouquets, root_element )
+        for item in bouquets.items:
             print( "Bouquet: %s" % ( item.name ) )
             for bouquetitem in item.items:
                 if bouquetitem.type == 'service_entry':
@@ -399,25 +422,33 @@ class MainWnd( gui.BouquetEditMainWnd ):
                     print( "   %s" % ( repr( bouquetitem.name ) ) )
             # next
         # next
+        return bouquets
+    # end def
+
+    def SaveAs( self, as_folder = None ):
+        self.__bouquets_tv      = self.__buildBouquet( 'User - bouquets (TV)', self.tv_root )
+        self.__bouquets_radio   = self.__buildBouquet( 'User - bouquets (Radio)', self.radio_root )
+
+        self.engima.bouquets[ 'radio' ] = self.__bouquets_radio
+        self.engima.bouquets[ 'tv' ] = self.__bouquets_tv
+        self.engima.save( as_folder )
         return
     # end def
 
-    def SaveAs( self, as_folder ):
-        self.__bouquets = enigma.Bouquet( name = 'User - bouquets (TV)', toplevel = '' )
-        self.__put_bouquet_entry( self.__bouquets,
-                                  self.bouquets.GetRootItem() )
-        for item in self.__bouquets.items:
-            print( "Bouquet: %s" % ( item.name ) )
-            for bouquetitem in item.items:
-                if bouquetitem.type == 'service_entry':
-                    print( "   %s" % ( repr( bouquetitem.service.name ) ) )
-                elif bouquetitem.type == 'marker':
-                    print( "   %s" % ( repr( bouquetitem.name ) ) )
-            # next
-        # next
-        self.engima.bouquets[ 'tv' ] = self.__bouquets
-        print( as_folder )
-        self.engima.save( as_folder )
+    def SaveAsHost( self, hostinfo ):
+        folder = "%s://%s:%s@%s%s" % ( hostinfo[ 'protocol' ],
+                                       hostinfo[ 'username' ],
+                                       hostinfo[ 'password' ],
+                                       hostinfo[ 'hostname' ],
+                                       hostinfo[ 'path' ] )
+        self.SetTitle( hostinfo[ 'hostname' ] )
+        self.SaveAs( self, folder )
+        return
+    # end def
+
+    def SaveAsFolder( self, folder ):
+        self.SetTitle( folder )
+        self.SaveAs( self, folder )
         return
     # end def
 
@@ -519,29 +550,43 @@ class MainWnd( gui.BouquetEditMainWnd ):
         return
     # end def
 
+    service_types = [ ( -1, ),
+                      ( 1, ),
+                      ( 2, ),
+                      ( 1, 2 ) ]
+
+    def __allowedService( self, service, idx, filter = None ):
+        if -1 not in self.service_types[ idx ] and service.servicetype not in self.service_types[ idx ]:
+            return False
+        # end if
+        if self.__filterEmptyTransponder and service.cleanname == '':
+            return False
+        # end if
+        if self.__filterDotTransponder and service.cleanname == '.':
+            return False
+        # end if
+        if filter is None:
+            return True
+        # end if
+        return ( filter in service.cleanname or
+                 filter in service.provider or
+                 filter in service.namespace or
+                 filter in service.transponder.frequency or
+                 filter in service.transponder.position )
+    # end def
+
     def clickApplyFilter( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
         some = self.filter.Value
         self.__items = []
-        count = 0
-        self.services.SetItemCount( count )
+        self.services.SetItemCount( 0 )
+        idx = self.channelTypes.GetSelection()
         for service in self.engima.services:
             service = self.engima.services[ service ]
-            if ( some in service.cleanname or
-                        some in service.provider or
-                        some in service.namespace or
-                        some in service.transponder.frequency or
-                        some in service.transponder.position ):
-                if ( ( self.__filterEmptyTransponder and service.cleanname == '' ) or
-                     ( self.__filterDotTransponder and service.cleanname == '.' ) ):
-                    pass
-                else:
-                    self.__items.append( service )
-                # end id
+            if self.__allowedService( service, idx, some ):
                 self.__items.append( service )
-                count += 1
             # end if
         # next
-        self.services.SetItemCount( count )
+        self.services.SetItemCount( len( self.__items ) )
         self.__reverse = not self.__reverse
         self.SortItems( self.__sortColumn )
         self.frame_2_statusbar.PushStatusText( "Filter", 2 )
@@ -552,12 +597,10 @@ class MainWnd( gui.BouquetEditMainWnd ):
     def clickClearFilter( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
         self.filter.Value = ''
         self.__items = []
+        idx = self.channelTypes.GetSelection()
         for service in self.engima.services:
             service = self.engima.services[ service ]
-            if ( ( self.__filterEmptyTransponder and service.cleanname == '' ) or
-                 ( self.__filterDotTransponder   and service.cleanname == '.' ) ):
-                pass
-            else:
+            if self.__allowedService( service, idx ):
                 self.__items.append( service )
             # end if
         # next
@@ -566,6 +609,11 @@ class MainWnd( gui.BouquetEditMainWnd ):
         self.SortItems( self.__sortColumn )
         self.frame_2_statusbar.PushStatusText( "Idle", 2 )
         self.Refresh()
+        return
+    # end def
+
+    def eventSelectChannelType( self, event ):
+        self.clickApplyFilter( event )
         return
     # end def
 
@@ -621,7 +669,7 @@ class MainWnd( gui.BouquetEditMainWnd ):
         e = self.bouquets.GetItemPyData( treeItem )
         if e.type == 'service_entry':
             self.bouquets.Delete( treeItem )
-            self.Save()
+            self.SaveAs()
         # end if
         return
     # end def
@@ -629,8 +677,9 @@ class MainWnd( gui.BouquetEditMainWnd ):
     def clickMakeBouquetChoice( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
         self.bouquets.DeleteAllItems()
         item = self.bouquets.AddRoot( 'root' )
-        self.__add_bouquet_entry( self.__bouquets, self.bouquets.GetRootItem(),
-                                  event.String )
+        self.tv_root = self.bouquets.AppendItem( item, 'Television' )
+        self.radio_root = self.bouquets.AppendItem( item, 'Radio' )
+        self.__add_bouquet_entry( self.__bouquets_tv, self.tv_root, event.String )
         return
     # end def
 
@@ -703,25 +752,17 @@ class MainWnd( gui.BouquetEditMainWnd ):
     # end def
 
     def clickMenuOpenReceiver( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
-        wmd = receiver.OpenReceiver( self, wx.ID_ANY )
-        if wmd.ShowModal() == wx.ID_OK:
-            # make sure that its closed
-            self.clickMenuClose( event )
-            # Open the receiver box
-            self.__streaming_host   = wmd.hostname.Value
-            hostinfo = {}
-            hostinfo[ 'protocol' ]  = 'ftp'
-            hostinfo[ 'username' ]  = wmd.username.Value
-            hostinfo[ 'password' ]  = wmd.password.Value
-            hostinfo[ 'hostname' ]  = wmd.hostname.Value
-            hostinfo[ 'path' ]      = wmd.path.Value
-            self.Populate( hostinfo )
+        wnd = receiver.OpenReceiver( self, wx.ID_ANY )
+        if wnd.OpenLocation():
+            hostinfo = wnd.GetHostInfo()
+            self.__streaming_host   = hostinfo[ 'hostname' ]
+            self.LoadFromHost( hostinfo )
         # end if
         return
     # end def
 
     def clickMenuSave( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
-        self.Save()
+        self.SaveAs()
         return
     # end def
 
@@ -741,27 +782,19 @@ class MainWnd( gui.BouquetEditMainWnd ):
     # end def
 
     def clickMenuSaveAsReceiver( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
-        wmd = receiver.OpenReceiver( self, wx.ID_ANY )
-        if wmd.ShowModal() == wx.ID_OK:
-            # make sure that its closed
-            self.clickMenuClose( event )
-            # Open the receiver box
-            self.__streaming_host   = wmd.hostname.Value
-            hostinfo = {}
-            hostinfo[ 'protocol' ]  = 'ftp'
-            hostinfo[ 'username' ]  = wmd.username.Value
-            hostinfo[ 'password' ]  = wmd.password.Value
-            hostinfo[ 'hostname' ]  = wmd.hostname.Value
-            hostinfo[ 'path' ]      = wmd.path.Value
-            self.LoadFromHost( hostinfo )
+        wnd = receiver.OpenReceiver( self, wx.ID_ANY )
+        if wnd.SaveAsLocation():
+            hostinfo = wnd.GetHostInfo()
+            self.__streaming_host   = hostinfo[ 'hostname' ]
+            self.SaveAsHost( hostinfo )
         # end if
         return
     # end def
 
     def clickMenuClose( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
-        print "Event handler 'clickMenuClose' implemented!"
         self.services.SetItemCount( 0 )
         self.bouquets.DeleteAllItems()
+        self.SetTitle()
         self.__items = []
         self.engima.clear()
         return
