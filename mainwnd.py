@@ -14,43 +14,13 @@ import config
 import enigma
 import html
 import printer
+import language
 
 __author__ = 'mbertens'
 
-class wxLanguageSupport( object ):
-    __wxLanguages       = {}
-    def __init__( self ):
-        for dirname, dirnames, filenames in os.walk( './locale' ):
-            language = dirname.split('/')[ -1 ]
-            if "LC_MESSAGES" in dirnames:
-                # Found locate directory
-                info = wx.Locale.FindLanguageInfo( language )
-                lang = { 'class': gettext.translation( "bouqueteditor",
-                                                        "./locale",
-                                                        languages = [ language ],
-                                                        fallback = False ),
-                         'info': info }
-                self.__wxLanguages[ language ] = lang
-            # end if
-        # next
-        return
-    # end def
 
-    def ActivateLanguage( self, language ):
-        langObject = self.__wxLanguages[ language ]
-        langObject[ 'class' ].install()
-        self.locale = wx.Locale( langObject[ 'info' ].Language )
-        locale.setlocale( locale.LC_ALL, language + ".utf8" )
-        return
-    # end def
 
-    def SupportedLanguages( self ):
-        return self.__wxLanguages
-    # end def
-# end class
-# test = gettext.GNUTranslations
-
-class MainWnd( gui.BouquetEditMainWnd, wxLanguageSupport ):
+class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
     COLUMN_SERVICE_NAME             = 0
     COLUMN_SERVICE_PROVIDER         = 1
     COLUMN_SERVICE_POSITION         = 2
@@ -73,18 +43,15 @@ class MainWnd( gui.BouquetEditMainWnd, wxLanguageSupport ):
     def __init__(self, *args, **kwds):
         __c = [ _("Service"), _("Provider"), _("Position"), _("Frequency"),
                 _("Symbolrate"), _("Namespace"), _("Transponder"), _("Type") ]
-        # Make sure the gettext is initialized
-        wxLanguageSupport.__init__( self )
+        # Get the application configuration
         self.Config         = config.Config( 'config.xml' )
+        # Make sure the gettext is initialized
         try:
-            language = self.Config.get_x_path( '/config/Preferences/wxChoice[@name="language"]', False )
-            # print( 'Set Language %s' % ( language.text ) )
-            self.ActivateLanguage( language.text )
+             language.wxLanguageSupport.__init__( self, self.Config.get_x_path( '/config/Preferences/wxChoice[@name="language"]', False ).text )
         except Exception, exc:
             print( "loading language setting: %s" % ( exc ) )
+            language.wxLanguageSupport.__init__( self, 'en_GB' )
         # end try
-        # self.ActivateLanguage( 'nl_NL' )
-        # self.ActivateLanguage( 'en_GB' )
         gui.BouquetEditMainWnd.__init__( self, *args, **kwds )
         # Read the configuration of the application
         self.COLUMNS        = []

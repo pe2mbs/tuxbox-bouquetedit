@@ -40,11 +40,12 @@ When starting the application and a receiver is set to autoload, the application
 # Last updates
 1.	Now Save As bouquets to folder works.
 2.	Now Save bouquets to folder works.
-3.	Some improvements to the preferences dialog where made, but stil not complete.
+3.	Some improvements to the preferences dialog where made, but still not complete.
 4.	Radio channels now implemented
-5.	Solved the issue "Sometimes in filter mode on ASC mode services disapear"
+5.	Solved the issue "Sometimes in filter mode on ASC mode services disappear"
 6.	Added help system
 7.  Multi language support added.
+8.	Moved language class to language module and improved setting user language
 
 # Todo
 1.	Save bouquets (receiver) it must be tested, it should work already.
