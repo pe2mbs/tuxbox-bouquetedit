@@ -5,12 +5,13 @@
         <wxSize>976, 829</wxSize>
         <Services>
             <Column id="0" name="Service" show="True" width="200"/>
-            <Column id="1" name="Profider" show="True" width="130"/>
+            <Column id="1" name="Provider" show="True" width="130"/>
             <Column id="2" name="Position" show="True" width="60"/>
             <Column id="3" name="Frequency" show="True" width="100"/>
             <Column id="4" name="Symbolrate" show="True" width="100"/>
             <Column id="5" name="Namespace" show="True" width="80"/>
             <Column id="6" name="Transponder" show="True" width="200"/>
+			<Column id="7" name="Type" show="True" width="100"/>
         </Services>
     </MainWnd>
     <OpenReceiver>
@@ -34,5 +35,6 @@
         <wxTextCtrl name="hostname"/>
         <wxTextCtrl name="username"/>
         <wxTextCtrl name="password"/>
+        <wxChoice name="language">en_GB</wxChoice>
     </Preferences>
 </config>

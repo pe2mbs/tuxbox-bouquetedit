@@ -3,6 +3,8 @@
 #
 #
 #
+import wxversion
+wxversion.select( "2.8" )
 import wx
 import gettext
 import time
@@ -50,7 +52,9 @@ class MyApp( wx.App ):
 # end class
 
 if __name__ == "__main__":
-    gettext.install( "app" ) # replace with the appropriate catalog name
+    gettext.install( 'bouqueteditor', './locale' )
+    gettext.textdomain( 'bouqueteditor' )
+    gettext.bindtextdomain('bouqueteditor', './locale' )
     app = MyApp( redirect=False, filename = "demo.log" )
     app.MainLoop()
 # end def

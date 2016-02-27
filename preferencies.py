@@ -14,16 +14,17 @@ class Preferences( gui.Preferences ):
     USERNAME_COLUMN = 3
     PASSWORD_COLUMN = 4
     CHECKBOX_COLUMN = 5
-    def __init__(self, config, *args, **kwds):
+    def __init__( self, parent, *args, **kwds ):
         gui.Preferences.__init__( self, *args, **kwds )
-        self.Config = config
+        self.__parent = parent
+        self.Config = parent.Config
         self.receivers.SetSize( ( 777, 337 ) )
-        self.receivers.InsertColumn(   self.HOSTNAME_COLUMN, 'Hostname' )
-        self.receivers.InsertColumn(   self.PROTOCOL_COLUMN, 'Protocol' )
-        self.receivers.InsertColumn(   self.PATH_COLUMN, 'Path' )
-        self.receivers.InsertColumn(   self.USERNAME_COLUMN, 'Username' )
-        self.receivers.InsertColumn(   self.PASSWORD_COLUMN, 'Password' )
-        self.receivers.InsertColumn(   self.CHECKBOX_COLUMN, 'Auto load' )
+        self.receivers.InsertColumn(   self.HOSTNAME_COLUMN, _('Hostname') )
+        self.receivers.InsertColumn(   self.PROTOCOL_COLUMN, _('Protocol') )
+        self.receivers.InsertColumn(   self.PATH_COLUMN, _('Path') )
+        self.receivers.InsertColumn(   self.USERNAME_COLUMN, _('Username') )
+        self.receivers.InsertColumn(   self.PASSWORD_COLUMN, _('Password') )
+        self.receivers.InsertColumn(   self.CHECKBOX_COLUMN, _('Auto load') )
         self.receivers.SetColumnWidth( self.CHECKBOX_COLUMN, 77 )
 
         def password_setter( this, editor, row, col ):
@@ -84,7 +85,7 @@ class Preferences( gui.Preferences ):
                                         choice_setter,
                                         choice_getter,
                                         id = wx.ID_ANY,
-                                        choices = [ "FTP", "SFTP" ],
+                                        choices = [ _("FTP"), _("SFTP") ],
                                         style = wx.CB_DROPDOWN )
 
         self.receivers.SetColumnEditor( self.PASSWORD_COLUMN,
@@ -100,6 +101,12 @@ class Preferences( gui.Preferences ):
                                         autoload_setter,
                                         autoload_getter,
                                         id = wx.ID_ANY )
+        # setup language choices
+        languages = self.__parent.SupportedLanguages()
+        for lang in languages:
+            lang = languages[ lang ]
+            idx = self.languages.Append( lang[ 'info' ].Description, lang[ 'info' ] )
+        # next
         self.load()
         self.sizeColumns()
         # self.receivers.setCheckboxColumn( self.CHECKBOX_COLUMN, self.OnCheckBoxColumn )
@@ -121,7 +128,6 @@ class Preferences( gui.Preferences ):
     # end def
 
     def OnProtocolSelectListBox( self, event ):
-        print( "OnProtocolSelectListBox( %s )" % ( repr( event ) ) )
         self.ProtocolSelectListBox.SetSelection( event.GetInt() )
         return
     # end def
@@ -135,7 +141,7 @@ class Preferences( gui.Preferences ):
             self.receivers.SetPyData( self.receivers.GetItem( row, 0 ), xml_item )
             for element in xml_item:
                 id = int( element.attrib[ 'id' ] )
-                if id == 4:
+                if id == self.PASSWORD_COLUMN:
                     self.receivers.SetStringItem( row, id, "*" * len( element.text ) )
                 else:
                     self.receivers.SetStringItem( row, id, element.text )
@@ -151,6 +157,35 @@ class Preferences( gui.Preferences ):
             self.receivers.SetPyData( litem, xml_item )
             row += 1
         # next
+        checkbox = self.Config.get_x_path( '/config/Preferences/wxCheckBox[@name="hideEmptyServices"]', False )
+        if checkbox is not None:
+            self.hideEmptyServices.Value = bool( checkbox.text )
+        # end if
+        checkbox = self.Config.get_x_path( '/config/Preferences/wxCheckBox[@name="hideDotServices"]', False )
+        if checkbox is not None:
+            self.hideDotServices.Value = bool( checkbox.text )
+        # end if
+        choice = self.Config.get_x_path( '/config/Preferences/wxChoice[@name="language"]', False )
+        if choice is not None:
+            try:
+                # print( "Set language: %s" % ( choice.text ) )
+                for idx in range( self.languages.GetCount() ):
+                    info = self.languages.GetClientData( idx )
+                    if info.CanonicalName == choice.text:
+                        # print( "Set language index: %i" % ( idx ) )
+                        self.languages.SetSelection( idx )
+                    # end if
+                # next
+            except:
+                print( "Could not set language: %s" % ( choice.text ) )
+                pass
+            # end try
+        else:
+            # Here we set de default
+            pass
+        # end if
+        # TODO: Fix loading all settings
+
         return
     # end def
 
@@ -169,12 +204,14 @@ class Preferences( gui.Preferences ):
                 for element in item:
                     id = int( element.attrib[ 'id' ] )
                     lItem = self.receivers.GetItem( idx, id )
-                    element.text = lItem.Text
+                    if id != self.PASSWORD_COLUMN: # for the password column the data is already in the xml element
+                        element.text = lItem.Text
+                    # end if
                 # next
             else:
                 # Handle NEW entry
                 child = etree.SubElement( receivers, "wxListItem" )
-                self.receivers.SetPyData( idx, child )
+                self.receivers.SetPyData( hItem )
                 child.attrib[ 'text' ] = hItem.GetText()
                 cItem = self.receivers.GetItem( idx, self.CHECKBOX_COLUMN )
                 child.attrib[ 'autoload' ] = "True" if cItem.GetImage() == self.receivers.IMG_CHECKED_BOX else "False"
@@ -182,10 +219,29 @@ class Preferences( gui.Preferences ):
                     child1 = etree.SubElement( child, "Column" )
                     child1.attrib[ 'id' ] = str( col )
                     lItem = self.receivers.GetItem( idx, col )
-                    child1.text = lItem.Text
+                    if col != self.PASSWORD_COLUMN: # for the password column the data is already in the xml element
+                        child1.text = lItem.Text
+                    else:
+                        element = self.receivers.GetPyData( self.receivers.GetItem( idx, id ) )
+                        child1.text = element.text
+                    # end if
                 # next
             # end if
         # next
+        checkbox = self.Config.get_x_path( '/config/Preferences/wxCheckBox[@name="hideEmptyServices"]', False )
+        if checkbox is not None:
+            checkbox.text = str( self.hideEmptyServices.Value )
+        # end if
+        checkbox = self.Config.get_x_path( '/config/Preferences/wxCheckBox[@name="hideDotServices"]', False )
+        if checkbox is not None:
+            checkbox.text = str( self.hideDotServices.Value )
+        # end if
+        choice = self.Config.get_x_path( '/config/Preferences/wxChoice[@name="language"]', False )
+        if choice is not None:
+            info = self.languages.GetClientData( self.languages.GetSelection() )
+            choice.text = info.CanonicalName
+        # end if
+        # TODO: Fix saveing all settings
         self.Config.save()
         return
     # end def
@@ -231,10 +287,12 @@ class Preferences( gui.Preferences ):
         # end if
         num_items = self.receivers.GetItemCount()
         self.receivers.InsertStringItem( num_items, self.hostname.Value )
-        self.receivers.SetStringItem( num_items, self.PROTOCOL_COLUMN, self.protocol.Value )
+
+
+        self.receivers.SetStringItem( num_items, self.PROTOCOL_COLUMN, self.protocol.GetItems()[ self.protocol.GetSelection() ] )
         self.receivers.SetStringItem( num_items, self.PATH_COLUMN, self.path.Value )
         self.receivers.SetStringItem( num_items, self.USERNAME_COLUMN, self.username.Value )
-        self.receivers.SetStringItem( num_items, self.PASSWORD_COLUMN, self.password.Value )
+        self.receivers.SetStringItem( num_items, self.PASSWORD_COLUMN, "*" * len( self.password.Value ) )
         litem = wx.ListItem()
         litem.SetMask( litem.GetMask( ) | wx.LIST_MASK_IMAGE )
         litem.SetColumn( self.CHECKBOX_COLUMN )
@@ -243,6 +301,11 @@ class Preferences( gui.Preferences ):
         self.receivers.SetItem( litem )
         # Mark new element
         self.receivers.SetPyData( litem, None )
+        passwd = etree.Element( 'password' )
+        passwd.text = self.password.Value
+        self.receivers.SetPyData( self.receivers.GetItem( num_items,
+                                                          self.PASSWORD_COLUMN ),
+                                  passwd )
         return
     # end def
 

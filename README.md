@@ -43,7 +43,8 @@ When starting the application and a receiver is set to autoload, the application
 3.	Some improvements to the preferences dialog where made, but stil not complete.
 4.	Radio channels now implemented
 5.	Solved the issue "Sometimes in filter mode on ASC mode services disapear"
-
+6.	Added help system
+7.  Multi language support added.
 
 # Todo
 1.	Save bouquets (receiver) it must be tested, it should work already.
@@ -51,10 +52,8 @@ When starting the application and a receiver is set to autoload, the application
 3.	Bouquet "Drag and Drop". 
 4.	"Drag and Drop" service to bouquet.
 5.	Printer setup and print.
-6.  Help system.
+6.  Help system contents must be added.
 7.  Improve further the preferences dialog
-8.	Add multiple languages
-
 
 # Issues
 

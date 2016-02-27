@@ -1,0 +1,22 @@
+[OPTIONS]
+Compatibility=1.1
+Full-text search=Yes
+Contents file=bouquethelp.hhc
+Compiled file=bouquethelp.chm
+Default Window=Help
+Default topic=doc-0003.htm
+Charset=utf-8
+Index file=bouquethelp.hhk
+Title=Bouquet Editor
+
+[WINDOWS]
+Help=,"bouquethelp.hhc","bouquethelp.hhk","doc-0003.htm",,,,,,0x2420,,0x380e,,,,,0,,,
+
+[FILES]
+doc-0003.htm
+
+[ALIAS]
+#include "bouquethelp_alias.h"
+
+[MAP]
+#include "bouquethelp_ids.h"

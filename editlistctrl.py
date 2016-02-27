@@ -106,7 +106,7 @@ class TextEditExMixin:
     # end def
 
     def make_editor( self, col, controls, *args, **kwargs ):
-        print( "make_editor( %i, %s, %s, %s )" % ( col, repr( controls ), repr( args ), repr( kwargs ) ) )
+        #print( "make_editor( %i, %s, %s, %s )" % ( col, repr( controls ), repr( args ), repr( kwargs ) ) )
         col_style = controls[ col ][ 'col_style' ]
 
         style = wx.TE_PROCESS_ENTER | wx.TE_PROCESS_TAB | wx.TE_RICH2
@@ -123,7 +123,7 @@ class TextEditExMixin:
         editor.SetFont( font )
         self.curRow = 0
         self.curCol = 0
-        print( "Hide" )
+        #print( "Hide" )
         editor.Hide()
         control[ 'editor' ]       = editor
         control[ 'col_style' ]    = col_style
@@ -384,7 +384,7 @@ class MyBaseListCtrl( wx.ListCtrl,
         if not isinstance( item, wx.ListItem ):
             raise Exception( "Invalid type: item must be wx.ListItem" )
         # end if
-        print( "SetPyData( %s, %s ) = ( %i, %i )" % ( item, data, item.Id, item.Column ) )
+        # print( "SetPyData( %s, %s ) = ( %i, %i )" % ( item, data, item.Id, item.Column ) )
         if item.Id in self.__map:
             self.__map[ item.Id ][ item.Column ] = data
         else:
@@ -397,7 +397,7 @@ class MyBaseListCtrl( wx.ListCtrl,
         if not isinstance( item, wx.ListItem ):
             raise Exception( "Invalid type: item must be wx.ListItem" )
         # end if
-        print( "GetPyData( %s ) = ( %i, %i )" % ( item, item.Id, item.Column ) )
+        # print( "GetPyData( %s ) = ( %i, %i )" % ( item, item.Id, item.Column ) )
         if item.Id in self.__map:
             row = self.__map[ item.Id ]
             if item.Column in row:

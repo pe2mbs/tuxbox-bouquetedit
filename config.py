@@ -58,6 +58,9 @@ class Config( object ):
         if len( result ) == 1 and not listitems:
             return result[ 0 ]
         # end if
+        if not listitems:
+            return None
+        # end if
         return result
     # end def
 

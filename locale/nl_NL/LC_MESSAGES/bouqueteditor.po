@@ -1,0 +1,465 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Tuxbox Bouquet Editor\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-02-27 06:06+0100\n"
+"PO-Revision-Date: 2016-02-27 08:00+0100\n"
+"Last-Translator: \n"
+"Language-Team: Marc Bertens <m.bertens@pe2mbs.nl>\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: /home/mbertens/python/tuxbox-bouquetedit\n"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:43
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:48
+msgid "Receiver"
+msgstr "Ontvanger"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:44
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:49
+msgid "Folder"
+msgstr "Map"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:45
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:467
+msgid "Open"
+msgstr "Open"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:46
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:74
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:339
+msgid "Save"
+msgstr "Opslaan"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:46
+msgid "Save to receiver"
+msgstr "Opslaan op receiver"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:50
+msgid "Save as"
+msgstr "Opslaan als"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:51
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:545
+msgid "Close"
+msgstr "Sluiten"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:51
+msgid "Close the bouquet"
+msgstr "Sluit boeketten"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:53
+msgid "Print"
+msgstr "Print"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:53
+msgid "Print the bouquets"
+msgstr "Print boeketten"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:54
+msgid "Print setup"
+msgstr "Print instellingen"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:56
+msgid "Exit"
+msgstr "Sluiten"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:56
+msgid "Exit the application"
+msgstr "Sluit de toepassing"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:57
+msgid "File"
+msgstr "Bestand"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:59
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:360
+msgid "Preferences"
+msgstr "Instellingen"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:59
+msgid "Application preferences"
+msgstr "Toepassing instellingen"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:60
+msgid "Options"
+msgstr "Opties"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:62
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:64
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:79
+msgid "Help"
+msgstr "Help"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:63
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:553
+msgid "About"
+msgstr "Over"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:63
+msgid "About this application"
+msgstr "Over deze toepassing"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:72
+msgid "Open folder"
+msgstr "Open map"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:73
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:479
+msgid "Open receiver"
+msgstr "Open ontvanger"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:74
+msgid "Save bouquets"
+msgstr "Opslaan boeketten"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:76
+msgid "New"
+msgstr "Nieuw"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:76
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:181
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:261
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:270
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:274
+msgid "New bouquet"
+msgstr "Nieuw boeket"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:77
+msgid "Delete"
+msgstr "Verwijderen"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:77
+msgid "Delete bouquest / entry"
+msgstr "Verwijder boeket / dienst"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:79
+msgid "Show help"
+msgstr "Laat help zien"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:84
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:625
+msgid "Filter"
+msgstr "Filter"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:86
+msgid "Apply Filter"
+msgstr "Toepas filter"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:87
+msgid "Clear Filter"
+msgstr "Verwijder filter"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:88
+msgid "Show channels"
+msgstr "Laat kanalen zien"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:88
+msgid "All channels"
+msgstr "Alle kanalen"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:88
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:359
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:412
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:713
+msgid "Television"
+msgstr "Televisie"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:88
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:361
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:420
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:714
+msgid "Radio"
+msgstr "Radio"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:88
+msgid "Television / Radio"
+msgstr "Televisie / Radio"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:90
+msgid ">>"
+msgstr ">>"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:91
+msgid "<<"
+msgstr "<<"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:94
+msgid "UP"
+msgstr "UP"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:95
+msgid "DN"
+msgstr "DN"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:139
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:371
+msgid "TuxBox - bouquet  editor"
+msgstr "TuxBox - bouquet  editor"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:142
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:574
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:643
+msgid "Idle"
+msgstr "Rust"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:142
+msgid "Modified"
+msgstr "Gewijziged"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:327
+msgid "Hostname"
+msgstr "Host naam"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:328
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:458
+msgid "Protocol"
+msgstr "Protocol"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:329
+msgid "Path"
+msgstr "Pad"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:330
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:462
+msgid "Username"
+msgstr "Gebruikers naam"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:331
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:464
+msgid "Password"
+msgstr "Wachtwoord"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:333
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:459
+msgid "FTP"
+msgstr ""
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:333
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:459
+msgid "SFTP"
+msgstr ""
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:337
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:83
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:89
+msgid "Add"
+msgstr "Toevoegen"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:338
+msgid "Auto load receiver"
+msgstr "Auto laden ontvanger"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:340
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:468
+msgid "Cancel"
+msgstr "Afbreken"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:342
+msgid "Hide empty services"
+msgstr "Verberg lege diensten"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:343
+msgid "Hide services with only '.'"
+msgstr "Verberg diensten mat alleen '.'"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:416
+msgid "Receivers"
+msgstr "Ontvangers"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:417
+msgid "Services"
+msgstr "Diensten"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:418
+msgid "Bouquets"
+msgstr "Boeketten"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:456
+msgid "Hostname / IP"
+msgstr "Host naam / IP"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:457
+msgid "dm7020hd"
+msgstr ""
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:460
+msgid "Directory"
+msgstr "Map"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:461
+msgid "/etc/enigma2"
+msgstr ""
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:463
+msgid "root"
+msgstr ""
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:465
+msgid "5701mb"
+msgstr ""
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:466
+msgid "Store in preferences"
+msgstr "Opslaan in instellingen"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:540
+msgid "TUXBOX Bouquet editor"
+msgstr "TUXBOX Bouquet editor"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:541
+msgid "version: 1.0.0"
+msgstr "Versie 1.0.0"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:542
+msgid "Author: Marc Bertens"
+msgstr "Auteur: Marc Bertens"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:543
+msgid "email: pe2mbs@pe2mbs.nl"
+msgstr "email: pe2mbs@pe2mbs.nl"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/gui.py:544
+msgid "Libraries: wxWidgets"
+msgstr "Biblioteken: wxWidgets"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:65
+msgid "Service"
+msgstr "Dienst naam"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:65
+msgid "Provider"
+msgstr "Leverancier"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:65
+msgid "Position"
+msgstr "Positie"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:65
+msgid "Frequency"
+msgstr "Frequentie"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:66
+msgid "Symbolrate"
+msgstr ""
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:66
+msgid "Namespace"
+msgstr ""
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:66
+msgid "Transponder"
+msgstr ""
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:66
+msgid "Type"
+msgstr "Soort"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:80
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:86
+msgid "Edit"
+msgstr "Wijzigen"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:81
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:87
+msgid "Insert before"
+msgstr "Invoeren ervoor"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:82
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:88
+msgid "Insert after"
+msgstr "Invoegen erna"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:84
+msgid "Marker"
+msgstr "Makeer label"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:90
+msgid "Bouquet"
+msgstr "Boeket"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:92
+msgid "Remove"
+msgstr "Verwijder"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:131
+msgid "Show/Hide Columns"
+msgstr "Verberk/laat zien kolomen"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:227
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:235
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:239
+msgid "New marker"
+msgstr "Nieuw makeer label"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:231
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:266
+msgid "Invalid child on BOUQUET_ITEM_MARKER_INS_BEFORE"
+msgstr ""
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:278
+msgid "Invalid event from PopupMenuBouquet()"
+msgstr ""
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:301
+msgid "Invalid selection from PopupMenuBouquet()"
+msgstr ""
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:364
+msgid "Unknown"
+msgstr "Onbekend"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:369
+#, python-format
+msgid "TuxBox - bouquet  editor (%s)"
+msgstr "TuxBox - bouquet  editor (%s)"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:378
+#, python-format
+msgid "Folder: %s"
+msgstr "Map: %s"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:396
+msgid "Loading"
+msgstr "Laden"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:403
+msgid "All bouquets"
+msgstr "Alle boeketten"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:774
+msgid "Select directory to load from.."
+msgstr "Selecteer map om te laden .."
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:804
+msgid "Select directory to save to.."
+msgstr "Selecteer map op te slaan op .."
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:862
+msgid "Do you really want to close this application?"
+msgstr "Wil U echt wilt deze toepassing te sluiten?"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:863
+msgid "Confirm Exit"
+msgstr "Bevestig sluiten"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:891
+#, python-format
+msgid "Unable to open: %s"
+msgstr "Kan %s niet openen"
+
+#: /home/mbertens/python/tuxbox-bouquetedit/mainwnd.py:892
+msgid "Error"
+msgstr "Fout"
+
+#~ msgid "Apply"
+#~ msgstr "Toepassen"
+
+#~ msgid "Clear"
+#~ msgstr "Schonen"

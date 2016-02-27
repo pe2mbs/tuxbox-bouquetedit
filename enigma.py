@@ -244,7 +244,7 @@ class Enigma2( object ):
     # end def
 
     def load( self, location ):
-        print( "enigma.load() entry" )
+        # print( "enigma.load() entry" )
         if self.re_protocol.match( location ):
             Open = lambda filename: urllib2.urlopen( '{0}/{1}'.format( location, filename ) )
         else:
@@ -325,7 +325,7 @@ class Enigma2( object ):
         self.bouquets = {}
         self.bouquets[ 'tv' ]     = self._read_bouquet( Open, 'bouquets.tv' )
         self.bouquets[ 'radio' ]  = self._read_bouquet( Open, 'bouquets.radio' )
-        print( "enigma.load() exit" )
+        # print( "enigma.load() exit" )
     # end def
 
     def _read_bouquet(self, Open, filename):
