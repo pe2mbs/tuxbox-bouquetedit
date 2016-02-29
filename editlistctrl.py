@@ -106,7 +106,7 @@ class TextEditExMixin:
     # end def
 
     def make_editor( self, col, controls, *args, **kwargs ):
-        #print( "make_editor( %i, %s, %s, %s )" % ( col, repr( controls ), repr( args ), repr( kwargs ) ) )
+        print( "make_editor( %i, %s, %s, %s )" % ( col, repr( controls ), repr( args ), repr( kwargs ) ) )
         col_style = controls[ col ][ 'col_style' ]
 
         style = wx.TE_PROCESS_ENTER | wx.TE_PROCESS_TAB | wx.TE_RICH2

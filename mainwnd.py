@@ -16,7 +16,7 @@ import enigma
 import html
 import printer
 import language
-import drag
+from extendtreectrl import SaveTreeItem
 
 __author__ = 'mbertens'
 
@@ -962,25 +962,21 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
         # One of the following methods of inserting will be called...
         def MoveHere( event ):
             # Save + delete the source
-            save = self.bouquets.SaveItemsToList( source )
+            childitem = SaveTreeItem( self.bouquets )
+            childitem.Copy( source )
             self.bouquets.Delete( source )
-            newitems = self.bouquets.InsertItemsFromList( save, targetparent, target )
-            #self.tree.UnselectAll()
-            for item in newitems:
-                self.bouquets.SelectItem( item )
-            # next
+            newitem = childitem.InsertItemsFromList( targetparent, target )
+            self.bouquets.SelectItem( newitem )
             return
         # end def
 
         def InsertInToThisGroup(event):
             # Save + delete the source
-            save = self.bouquets.SaveItemsToList(source)
-            self.bouquets.Delete(source)
-            newitems = self.bouquets.InsertItemsFromList(save, target)
-            #self.tree.UnselectAll()
-            for item in newitems:
-                self.bouquets.SelectItem(item)
-            # next
+            childitem = SaveTreeItem( self.bouquets )
+            childitem.Copy( source )
+            self.bouquets.Delete( source )
+            newitem = childitem.InsertItemsFromList( target )
+            self.bouquets.SelectItem( newitem )
             return
         # end def
         #---------------------------------------
@@ -997,7 +993,9 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
                 MoveHere( None )
             # end if
         else:
-            if self.dragType == newposdata.type:
+            if ( self.dragType == newposdata.type or
+                    (   self.dragType in [ 'service_entry', 'marker' ] and
+                        newposdata.type in [ 'service_entry', 'marker' ] ) ):
                 if self.bouquets.IsExpanded( target ):
                     print("InsertInToThisGroup( None )")
                     InsertInToThisGroup( None )
@@ -1005,6 +1003,8 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
                     print("MoveHere( None )")
                     MoveHere( None )
                 # end if
+            elif self.dragType in [ 'service_entry', 'marker' ] and newposdata.type == 'bouquet':
+                InsertInToThisGroup( None )
             else:
                 print( "Some conversion must be done" )
                 print( self.__items[ self.dragItem ] )
