@@ -905,7 +905,7 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
     # end def
 
     def beginDragService( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
-        print "Event handler 'beginDragService' implemented!"
+        print "Event handler 'beginDragService' not implemented!"
         event.Allow()
         self.dragItem    = self.services.GetFirstSelected()
         if self.dragItem == -1:
@@ -913,42 +913,37 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
             return
         # end if
         self.dragType = self.__items[ self.dragItem ].type
-
         # self.bouquets.SetItemDropHighlight( item, boolhighlight = true )
-
         return
     # end def
 
     def beginDragBouquet( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
-        print "Event handler 'beginDragBouquet' implemented!"
         event.Allow()
         self.dragItem = event.GetItem()
         data = self.bouquets.GetPyData( self.dragItem )
         self.dragType = data.type
-        print( "drag type: %s" % ( self.dragType ) )
         return
     # end def
 
     def endDragBouquet( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
-        print "Event handler 'endDragBouquet' implemented!"
         # If we dropped somewhere that isn't on top of an item, ignore the event
         if event.GetItem().IsOk():
             target = event.GetItem()
         else:
-            print( "event.GetItem().IsOk() = false" )
+            # print( "event.GetItem().IsOk() = false" )
             return
         # end if
         # Make sure this member exists.
         try:
             source = self.dragItem
         except:
-            print( "exception on 'source = self.dragItem'" )
+            # print( "exception on 'source = self.dragItem'" )
             return
         # end try
 
         # Prevent the user from dropping an item inside of itself
         if self.bouquets.ItemIsChildOf( target, source ):
-            print "the tree item can not be moved in to itself! "
+            # print "the tree item can not be moved in to itself! "
             self.bouquets.Unselect()
             return
         # end if
@@ -980,12 +975,12 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
             return
         # end def
         #---------------------------------------
-        print( "drag type: %s" % ( self.dragType ) )
-        print( "new position type: %s" % ( self.bouquets.GetPyData( target ).type ) )
+        # print( "drag type: %s" % ( self.dragType ) )
+        # print( "new position type: %s" % ( self.bouquets.GetPyData( target ).type ) )
         newposdata = self.bouquets.GetPyData( target )
         if newposdata.type == "bouquet" and self.dragType == "bouquet":
-            print("MoveHere( None ) bouquet")
-            print( newposdata )
+            # print("MoveHere( None ) bouquet")
+            # print( newposdata )
             if newposdata.filename in [ 'bouquets.tv', 'bouquets.radio' ]:
                 # This are the two root items, so insert into
                 InsertInToThisGroup( None )
@@ -997,10 +992,10 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
                     (   self.dragType in [ 'service_entry', 'marker' ] and
                         newposdata.type in [ 'service_entry', 'marker' ] ) ):
                 if self.bouquets.IsExpanded( target ):
-                    print("InsertInToThisGroup( None )")
+                    # print("InsertInToThisGroup( None )")
                     InsertInToThisGroup( None )
                 else:
-                    print("MoveHere( None )")
+                    # print("MoveHere( None )")
                     MoveHere( None )
                 # end if
             elif self.dragType in [ 'service_entry', 'marker' ] and newposdata.type == 'bouquet':
