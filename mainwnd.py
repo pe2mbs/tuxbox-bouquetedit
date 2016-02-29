@@ -1,5 +1,6 @@
 import wx
 import wx.html # ADD THIS to use the HtmlWindow
+import wx.gizmos
 import locale
 import os
 import subprocess
@@ -15,10 +16,9 @@ import enigma
 import html
 import printer
 import language
+import drag
 
 __author__ = 'mbertens'
-
-
 
 class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
     COLUMN_SERVICE_NAME             = 0
@@ -53,7 +53,6 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
             language.wxLanguageSupport.__init__( self, 'en_GB' )
         # end try
         gui.BouquetEditMainWnd.__init__( self, *args, **kwds )
-        # Read the configuration of the application
         self.COLUMNS        = []
         self.Preferences    = None
         self.bouquetMenu    = wx.Menu()
@@ -108,6 +107,7 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
             print( "Setup services: %s" % ( exc ) )
         # end try
         self.services.Bind( wx.EVT_MENU, self.PopupMenuServices )
+
         self.Bind( wx.EVT_CLOSE, self.OnClose )
         self.listMenu.AppendMenu( wx.NewId(), _('Show/Hide Columns'), showMenu )
 
@@ -131,16 +131,19 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
             self.__streaming_host = autoload[ 'hostname' ]
             self.LoadFromHost( autoload )
         # end if
+        self.__Modified = False
         return
     # end def
 
     def clickMoveEntryUp( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
         self.bouquets.MoveUp( self.bouquets.GetSelection() )
+        self.__Modified = True
         return
     # end def
 
     def clickMoveEntryDown( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
         self.bouquets.MoveDown( self.bouquets.GetSelection() )
+        self.__Modified = True
         return
     # end def
 
@@ -154,6 +157,7 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
 
             # end if
             self.bouquets.Delete( treeItem )
+            self.__Modified = True
         # end if
         return
     # end def
@@ -177,6 +181,7 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
 
             # end if
         # end if
+        self.__Modified = True
         self.bouquets.Refresh()
         self.bouquets.SelectItem( child )
         self.bouquets.EditLabel( child )
@@ -258,6 +263,7 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
             else:
                 raise Exception( _("Invalid event from PopupMenuBouquet()") )
             # end if
+            self.__Modified = True
             if child_e is not None:
                 self.bouquets.SetItemPyData( child, child_e )
                 if child_e.type == 'bouquet':
@@ -277,7 +283,6 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
             self.bouquets.Refresh()
             self.bouquets.SelectItem( child )
             self.bouquets.EditLabel( child )
-
         else:
             raise Exception( _("Invalid selection from PopupMenuBouquet()") )
         # end if
@@ -404,6 +409,7 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
                                   self.radio_root,
                                   self.bouquet_choice.GetLabelText() )
         self.bouquets.Expand( self.radio_root )
+        self.__Modified = False
         return
     # end def
 
@@ -450,6 +456,7 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
         self.engima.bouquets[ 'radio' ] = self.__bouquets_radio
         self.engima.bouquets[ 'tv' ] = self.__bouquets_tv
         self.engima.save( as_folder )
+        self.__Modified = False
         return
     # end def
 
@@ -675,6 +682,7 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
                                          enigma.BouquetService( service = s ) )
 
         # end if
+        self.__Modified = True
         return
     # end def
 
@@ -685,6 +693,7 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
             self.bouquets.Delete( treeItem )
             self.SaveAs()
         # end if
+        self.__Modified = True
         return
     # end def
 
@@ -702,6 +711,7 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
         service = self.bouquets.GetPyData( event.Item )
         if service.type == 'marker':
             service.name = self.bouquets.GetEditControl().Value
+            self.__Modified = True
         # end if
         return
 
@@ -811,6 +821,7 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
         self.SetTitle()
         self.__items = []
         self.engima.clear()
+        self.__Modified = False
         return
     # end def
 
@@ -839,17 +850,20 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
     # end def
 
     def OnClose( self, event ):
-        dlg = wx.MessageDialog( self,
-                                _("Do you really want to close this application?" ),
+        if self.__Modified:
+            dlg = wx.MessageDialog( self,
+                                _("Not all data is saved, Do you really want to close this application?" ),
                                 _("Confirm Exit"), wx.OK | wx.CANCEL | wx.ICON_QUESTION )
-        result = dlg.ShowModal()
-        dlg.Destroy()
-        if result == wx.ID_OK:
-            size = self.Config.get_x_path( '/config/MainWnd/wxSize', False )
-            size.text = "%i,%i" % ( self.Size.width, self.Size.height )
-            self.Config.save()
-            self.Destroy()
-        # end if
+            result = dlg.ShowModal()
+            dlg.Destroy()
+            if result != wx.ID_OK:
+                return
+            # end if
+        # end def
+        size = self.Config.get_x_path( '/config/MainWnd/wxSize', False )
+        size.text = "%i,%i" % ( self.Size.width, self.Size.height )
+        self.Config.save()
+        self.Destroy()
         return
     # end def
 
@@ -887,6 +901,116 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
         wnd = aboutwmd.AboutWnd( self, wx.ID_ANY )
         wnd.ShowModal()
         del wnd
+        return
+    # end def
+
+    def beginDragService( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
+        print "Event handler 'beginDragService' implemented!"
+        event.Allow()
+        self.dragItem    = self.services.GetFirstSelected()
+        if self.dragItem == -1:
+            print( "invalid item" )
+            return
+        # end if
+        self.dragType = self.__items[ self.dragItem ].type
+
+        # self.bouquets.SetItemDropHighlight( item, boolhighlight = true )
+
+        return
+    # end def
+
+    def beginDragBouquet( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
+        print "Event handler 'beginDragBouquet' implemented!"
+        event.Allow()
+        self.dragItem = event.GetItem()
+        data = self.bouquets.GetPyData( self.dragItem )
+        self.dragType = data.type
+        print( "drag type: %s" % ( self.dragType ) )
+        return
+    # end def
+
+    def endDragBouquet( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
+        print "Event handler 'endDragBouquet' implemented!"
+        # If we dropped somewhere that isn't on top of an item, ignore the event
+        if event.GetItem().IsOk():
+            target = event.GetItem()
+        else:
+            print( "event.GetItem().IsOk() = false" )
+            return
+        # end if
+        # Make sure this member exists.
+        try:
+            source = self.dragItem
+        except:
+            print( "exception on 'source = self.dragItem'" )
+            return
+        # end try
+
+        # Prevent the user from dropping an item inside of itself
+        if self.bouquets.ItemIsChildOf( target, source ):
+            print "the tree item can not be moved in to itself! "
+            self.bouquets.Unselect()
+            return
+        # end if
+
+        # Get the target's parent's ID
+        targetparent = self.bouquets.GetItemParent( target )
+        if not targetparent.IsOk():
+            targetparent = self.bouquets.GetRootItem()
+        # end if
+
+        # One of the following methods of inserting will be called...
+        def MoveHere( event ):
+            # Save + delete the source
+            save = self.bouquets.SaveItemsToList( source )
+            self.bouquets.Delete( source )
+            newitems = self.bouquets.InsertItemsFromList( save, targetparent, target )
+            #self.tree.UnselectAll()
+            for item in newitems:
+                self.bouquets.SelectItem( item )
+            # next
+            return
+        # end def
+
+        def InsertInToThisGroup(event):
+            # Save + delete the source
+            save = self.bouquets.SaveItemsToList(source)
+            self.bouquets.Delete(source)
+            newitems = self.bouquets.InsertItemsFromList(save, target)
+            #self.tree.UnselectAll()
+            for item in newitems:
+                self.bouquets.SelectItem(item)
+            # next
+            return
+        # end def
+        #---------------------------------------
+        print( "drag type: %s" % ( self.dragType ) )
+        print( "new position type: %s" % ( self.bouquets.GetPyData( target ).type ) )
+        newposdata = self.bouquets.GetPyData( target )
+        if newposdata.type == "bouquet" and self.dragType == "bouquet":
+            print("MoveHere( None ) bouquet")
+            print( newposdata )
+            if newposdata.filename in [ 'bouquets.tv', 'bouquets.radio' ]:
+                # This are the two root items, so insert into
+                InsertInToThisGroup( None )
+            else:
+                MoveHere( None )
+            # end if
+        else:
+            if self.dragType == newposdata.type:
+                if self.bouquets.IsExpanded( target ):
+                    print("InsertInToThisGroup( None )")
+                    InsertInToThisGroup( None )
+                else:
+                    print("MoveHere( None )")
+                    MoveHere( None )
+                # end if
+            else:
+                print( "Some conversion must be done" )
+                print( self.__items[ self.dragItem ] )
+            # end if
+        # end if
+        self.__Modified = True
         return
     # end def
 # end class

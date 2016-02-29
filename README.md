@@ -46,15 +46,15 @@ When starting the application and a receiver is set to autoload, the application
 6.	Added help system
 7.  Multi language support added.
 8.	Moved language class to language module and improved setting user language
+9.	Drag and Drop in the bouquet tree control now implemented.
 
 # Todo
 1.	Save bouquets (receiver) it must be tested, it should work already.
 2.	Save As bouquets (receiver) it must be tested, it should work already.
-3.	Bouquet "Drag and Drop". 
-4.	"Drag and Drop" service to bouquet.
-5.	Printer setup and print.
-6.  Help system contents must be added.
-7.  Improve further the preferences dialog
+3.	"Drag and Drop" service to bouquet.
+4.	Printer setup and print.
+5.  Help system contents must be added.
+6.  Improve further the preferences dialog
 
 # Issues
 
