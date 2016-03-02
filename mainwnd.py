@@ -505,7 +505,7 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
 
     def clickSelectBouquetEntry( self, event ):
         service = self.bouquets.GetPyData( event.Item )
-        if service.type == 'service_entry':
+        if service is not None and service.type == 'service_entry':
             # Find the Service in the service list
             for idx, item in enumerate( self.__items ):
                 if item == service.service:
@@ -520,8 +520,7 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
 
     def keyDownService(self, event):  # wxGlade: BouquetEditMainWnd.<event_handler>
         if self.mplayer_process and event.KeyCode in [ ord('Q'),ord('q') ]:
-            self.mplayer_process.terminate()
-            os.system( 'killall mplayer' )
+            self.stopPlayerProcess()
         # end if
         return
     # end def
@@ -638,13 +637,17 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
         return
     # end def
 
-    def clickAcivateService( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
+    def stopPlayerProcess( self ):
+        if self.mplayer_process:
+            self.mplayer_process.terminate()
+            os.system( 'killall mplayer' )
+        # end if
+        return
+    # end def
+
+    def startPlayerProcess( self, service ):
         if self.__streaming_host:
-            if self.mplayer_process:
-                self.mplayer_process.terminate()
-                os.system( 'killall mplayer' )
-            # end if
-            service = self.__items[ event.Index ]
+            self.stopPlayerProcess()
             self.mplayer_process = subprocess.Popen( [ 'mplayer',
                                                        '-quiet',
                                                        '-really-quiet',
@@ -652,7 +655,25 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
                                                        '128',
                                 'http://{0}:8001/{1}'.format( self.__streaming_host,
                                             self.engima.get_service_desc( service ) ) ] )
+        # end if
+        return
+    # end def
 
+    def clickAcivateService( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
+        self.startPlayerProcess( self.__items[ event.Index ] )
+        return
+    # end def
+
+    def clickActivateBouquetEntry( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
+        service = self.bouquets.GetPyData( event.Item )
+        if service is None:
+            return
+        elif service.type == 'service_entry':
+            self.startPlayerProcess( service )
+        elif service.type == 'marker':
+            # Go into edit mode
+            self.bouquets.EditLabel( event.Item )
+        # end if
         return
     # end def
 
@@ -714,28 +735,6 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
             self.__Modified = True
         # end if
         return
-
-    def clickActivateBouquetEntry( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
-        if self.__streaming_host:
-            service = self.bouquets.GetPyData( event.Item )
-            if service.type == 'service_entry':
-                if self.mplayer_process:
-                    self.mplayer_process.terminate()
-                    os.system( 'killall mplayer' )
-                # end if
-                self.mplayer_process = subprocess.Popen( [ 'mplayer',
-                                                           '-quiet',
-                                                           '-really-quiet',
-                                                            '-cache',
-                                                            '128',
-                                    'http://{0}:8001/{1}'.format( self.__streaming_host,
-                                                self.engima.get_service_desc( service ) ) ] )
-            elif service.type == 'marker':
-                # Go into edit mode
-                self.bouquets.EditLabel( event.Item )
-            # end if
-        # end if
-        return
     # end def
 
     def keyDownBouquetEntry( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
@@ -752,8 +751,7 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
         elif keyCode == 314 and self.bouquets.IsExpanded( treeItem ):    # left
             self.bouquets.Collapse( treeItem )
         elif self.mplayer_process and event.KeyCode in [ ord('Q'),ord('q') ]:
-            self.mplayer_process.terminate()
-            os.system( 'killall mplayer' )
+            self.stopPlayerProcess()
         else:
             event.Skip()
         # end if
@@ -838,8 +836,8 @@ class MainWnd( gui.BouquetEditMainWnd, language.wxLanguageSupport ):
         return
     # end def
 
-    def clickMenuPrintSetup( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
-        print "Event handler 'clickMenuPrintSetup' not implemented!"
+    def clickMenuPrintPreview( self, event ):  # wxGlade: BouquetEditMainWnd.<event_handler>
+        print "Event handler 'clickMenuPrintPreview' not implemented!"
 
         document = html.HtmlConverter()
         data     = document.generate_service( self.__items, 'All services' )
